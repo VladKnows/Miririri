@@ -14,8 +14,7 @@ public abstract class Enemies extends MovingEntity {
     String name;
     GameScreen gs;
 
-    public Ability[] abilities;
-    public Ability[] usedAbilities;
+    Ability[] abilities;
     int onAbilityPriority = 0;
     int []abilityPriority;
     int []abilityPriorityTime;
@@ -23,8 +22,8 @@ public abstract class Enemies extends MovingEntity {
 
     int castTime;
     boolean castOn = false;
-    public boolean abilityOn = false;
-    public int onAbility;
+    boolean abilityOn = false;
+    int onAbility;
     int abilityTimer = 0;
 
     ImageVector []castImages;
@@ -40,6 +39,10 @@ public abstract class Enemies extends MovingEntity {
         direction = "down";
         standing = true;
     }
+
+    public Ability[] getAbilities() { return abilities; }
+    public boolean isAbilityOn() { return abilityOn; }
+    public int getOnAbility() { return onAbility; }
 
     abstract void loadAbilities() throws IOException;
 
@@ -90,13 +93,13 @@ public abstract class Enemies extends MovingEntity {
     }
 
     public void draw(GameScreen gs, Graphics2D g2) {
-        int screenX = worldX - gs.player.worldX + gs.player.screenX;
-        int screenY = worldY - gs.player.worldY + gs.player.screenY;
+        int screenX = worldX - gs.getPlayer().worldX + gs.getPlayer().screenX;
+        int screenY = worldY - gs.getPlayer().worldY + gs.getPlayer().screenY;
 
-        if(worldX + gs.tileSize> gs.player.worldX - gs.player.screenX &&
-                worldX - gs.tileSize< gs.player.worldX + gs.player.screenX &&
-                worldY + gs.tileSize> gs.player.worldY - gs.player.screenY &&
-                worldY - gs.tileSize< gs.player.worldY + gs.player.screenY) {
+        if(worldX + gs.tileSize> gs.getPlayer().worldX - gs.getPlayer().screenX &&
+                worldX - gs.tileSize< gs.getPlayer().worldX + gs.getPlayer().screenX &&
+                worldY + gs.tileSize> gs.getPlayer().worldY - gs.getPlayer().screenY &&
+                worldY - gs.tileSize< gs.getPlayer().worldY + gs.getPlayer().screenY) {
             g2.drawImage(imageGetter(), screenX, screenY, gs.tileSize, gs.tileSize, null);
         }
     }
@@ -178,7 +181,7 @@ public abstract class Enemies extends MovingEntity {
             collisionOn1 = false;
             collisionOn2 = false;
             checkDirection(distanceX, distanceY);
-            gs.cChecker.CheckTile(this);
+            gs.getcChecker().CheckTile(this);
 
             if(!collisionOn1 && abs(distanceY) > speed) {
                 if (distanceY > 0)
@@ -198,8 +201,6 @@ public abstract class Enemies extends MovingEntity {
         return ok;
     }
 
-//    void abilityGoAfterPlayer(Abilities ability, int x, int y) {
-//    }
 
     public void update(int x, int y) {
         int distanceX, distanceY;

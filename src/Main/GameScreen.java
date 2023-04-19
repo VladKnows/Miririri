@@ -1,7 +1,6 @@
 package Main;
 
-import Abilities.Projectile;
-import Abilities.Projectile_Static;
+import Abilities.Ability;
 import Entities.Enemies;
 import Entities.NPC;
 import Entities.Player;
@@ -11,16 +10,18 @@ import Tiles.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Vector;
 
 public class GameScreen extends JPanel implements Runnable {
+    //Tiles
     final int originalTileSize = 32;
     public static final int scale = 3;
     public final int tileSize = originalTileSize * scale;
     public final int tileSizeHalf = tileSize / 2;
 
+    //Screen
     public final int maxScreenCol = 16;
     public final int maxScreenRow = 9;
     public final int screenWidth = tileSize * maxScreenCol;
@@ -28,21 +29,28 @@ public class GameScreen extends JPanel implements Runnable {
     public final int screenWidthHalf = screenWidth / 2;
     public final int screenHeightHalf = screenHeight / 2;
 
-    public Map []maps = new Map[3];
-
+    //Others
     int FPS = 60;
-    Keys keys = new Keys();
-    public Player player = new Player(this, keys);
+
     Thread gameThread;
-    public TileManager tileM;
-    public CollisionCheck cChecker = new CollisionCheck(this);
-    public UI ui = new UI(this);
+    Map []maps = new Map[3];
+    Keys keys = new Keys();
+    TileManager tileM;
+    UI ui = new UI(this);
+    CollisionCheck cChecker = new CollisionCheck(this);
+    Placement place = new Placement(this);
 
-    public Placement place = new Placement(this);
-    public SuperObject []obj = new SuperObject[10];
-    public NPC []npc = new NPC[8];
-    public Enemies []enemies = new Enemies[10];
+    //Entities & Objects
+    NPC []npc = new NPC[8];
+    Player player = new Player(this, keys);
+    SuperObject []obj = new SuperObject[10];
+    Enemies []enemies = new Enemies[10];
 
+    //Abilities
+    public Vector<Ability> enemyAbilities;
+    public Vector<Ability> playerAbilities;
+
+    //Constructor
     public GameScreen() throws IOException {
         maps[0] = new Map("Map0.txt", 80, 50);
         //maps[1] = new Map("Map1.txt", 100, 100);
@@ -57,71 +65,92 @@ public class GameScreen extends JPanel implements Runnable {
         startThread();
     }
 
+    //Getters
+    public Player getPlayer() { return player; }
+    public Map[] getMaps() { return maps; }
+    public NPC[] getNpc() { return npc; }
+    public UI getUi() { return ui; }
+    public CollisionCheck getcChecker() { return cChecker; }
+    public SuperObject[] getObj() { return obj; }
+
+    public Map getMaps(int nr) { return maps[nr]; }
+    public NPC getNpc(int nr) { return npc[nr]; }
+    public SuperObject getObj(int nr) { return obj[nr]; }
+
+    //Setters
+    public void setObj(int index, SuperObject obj) {
+        this.obj[index] = null;
+    }
+
+    //Thread
     public void startThread() {
         gameThread = new Thread(this);
         gameThread.start();
     }
 
-    public void update() {
-        player.update();
+    //Updates
+    public void updateEnemies() {
         for(int i = 0; i < enemies.length; i++) {
             if(enemies[i] != null) {
-                enemies[i].update(player.worldX, player.worldY);
-                if(enemies[i].abilityOn) {
-                    enemies[i].abilities[enemies[i].onAbility].update(this, enemies[i].worldX, enemies[i].worldY);
+                enemies[i].update(player.getWorldX(), player.getWorldY());
+                if(enemies[i].isAbilityOn()) {
+                    enemies[i].getAbilities()[enemies[i].getOnAbility()].update(this, enemies[i].getWorldX(), enemies[i].getWorldY());
                 }
             }
         }
     }
+    public void update() {
+        if(!this.getUi().isDialogueCheck()) {
+            player.update();
+            updateEnemies();
+        }
+    }
 
-    public void paintComponent(Graphics g) {
-
-        super.paintComponent(g);
-
-        BufferedImage back = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2 = back.createGraphics();
-
-        //Tiles
-        tileM.draw(g2);
-
-        //Objects
+    //Display On Screen
+    void drawObjects(Graphics2D g2) {
         for(int i = 0; i < obj.length; i++) {
-            if (obj[i] != null) {
-                obj[i].draw(g2, this);
-            }
+            if (obj[i] != null) { obj[i].draw(this, g2); }
         }
+    }
 
-        //NPCs
+    void drawNpcs(Graphics2D g2) {
         for(int i = 0; i < npc.length; i++) {
-            if(npc[i] != null) {
-                npc[i].draw(g2, this);
-            }
+            if(npc[i] != null) { npc[i].draw(this, g2); }
         }
+    }
 
-        //Enemies && Abilities
+    //to change to Enemies and another one for abilities
+    void drawEnemiesAndAbilities(Graphics2D g2) {
         for(int i = 0; i < enemies.length; i++) {
             if(enemies[i] != null) {
                 enemies[i].draw(this, g2);
-                if(enemies[i].abilityOn) {
-                    enemies[i].abilities[enemies[i].onAbility].draw(this, g2);
-                }
+                if(enemies[i].isAbilityOn()) { enemies[i].getAbilities()[enemies[i].getOnAbility()].draw(this, g2); }
             }
         }
+    }
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
-        //Player
-        player.draw(g2);
+        //For Double Buffer
+        BufferedImage back = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = back.createGraphics();
 
-        //Player Abilities - to rework
+        //Draws
+        tileM.draw(g2);                 //Tiles
+        drawObjects(g2);                //Objects
+        drawNpcs(g2);                   //NPCs
+        drawEnemiesAndAbilities(g2);    //Enemies & their Abilities
+        player.draw(g2);                //Player
+        ui.draw(g2);                    //UI
 
-        //UI
-        ui.draw(g2);
+        //Double Buffer
         g2.dispose();
-
         Graphics2D g2Front = (Graphics2D) g;
         g2Front.drawImage(back, 0, 0, null);
         g2Front.dispose();
     }
 
+    //Main Loop
     @Override
     public void run() {
         try {

@@ -57,8 +57,8 @@ abstract public class Projectile {
     }
 
     public void draw(GameScreen gs, Graphics2D g2) {
-        int screenX = x - gs.player.worldX + gs.player.screenX;
-        int screenY = y - gs.player.worldY + gs.player.screenY;
+        int screenX = x - gs.getPlayer().getWorldX() + gs.getPlayer().screenX;
+        int screenY = y - gs.getPlayer().getWorldY() + gs.getPlayer().screenY;
         g2.drawImage(image.GetImage(), screenX, screenY, width, height, null);
     }
 }

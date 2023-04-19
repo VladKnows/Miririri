@@ -21,7 +21,7 @@ public class ImageVector {
         onImage = 0;
 
         images = new BufferedImage[numberOfImages];
-        String place = "/res" + path + "/" + name + "_";
+        String place = path + "/" + name + "_";
         for(int i = 0; i < numberOfImages; i++) {
             images[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(place + "" + i + ".png")));
         }

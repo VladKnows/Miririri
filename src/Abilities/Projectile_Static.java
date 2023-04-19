@@ -19,7 +19,7 @@ public class Projectile_Static extends Projectile{
     @Override
     public void update(GameScreen gs, int entityX, int entityY) {
         setCoord(entityX, entityY);
-        gs.cChecker.CheckHit(gs.player, this);
+        gs.getcChecker().CheckHit(gs.getPlayer(), this);
     }
     
 }

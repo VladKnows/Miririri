@@ -12,22 +12,16 @@ import java.io.InputStreamReader;
 import java.util.Objects;
 
 public class TileManager {
+    GameScreen gs;
     public Tile[] tile = new Tile[80];
     public int [][]mapTile;
-    GameScreen gs;
 
     public TileManager(GameScreen gs, int mapNumber) throws IOException {
         this.gs = gs;
 
         getTileImage();
-        mapTile = new int[gs.maps[mapNumber].maxWorldCol][gs.maps[mapNumber].maxWorldRow];
-        loadMap("/res/Maps/" + gs.maps[mapNumber].source, mapNumber);
-        for(int i = 0; i < gs.maps[mapNumber].maxWorldCol; i++) {
-            for(int j = 0; j < gs.maps[mapNumber].maxWorldRow; j++) {
-                System.out.print(mapTile[i][j] + " ");
-            }
-            System.out.println();
-        }
+        mapTile = new int[gs.getMaps()[mapNumber].maxWorldCol][gs.getMaps()[mapNumber].maxWorldRow];
+        loadMap("/res/Maps/" + gs.getMaps()[mapNumber].source, mapNumber);
     }
 
     public void loadMap(String a, int mapNumber) throws IOException {
@@ -35,11 +29,11 @@ public class TileManager {
         assert is != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-        for(int i = 0; i < gs.maps[mapNumber].maxWorldRow; i++) {
+        for(int i = 0; i < gs.getMaps()[mapNumber].maxWorldRow; i++) {
             String s = br.readLine();
             s = s.replaceAll("  ", " ");
             String []numbers = s.split(" ");
-            for(int j = 0; j < gs.maps[mapNumber].maxWorldCol; j++) {
+            for(int j = 0; j < gs.getMaps()[mapNumber].maxWorldCol; j++) {
                 int num = Integer.parseInt(numbers[j]);
                 mapTile[j][i] = num;
             }
@@ -92,8 +86,8 @@ public class TileManager {
 
     public void draw(Graphics2D g2) {
 
-        int screenX = gs.player.worldX + gs.tileSizeHalf - gs.screenWidthHalf;
-        int screenY = gs.player.worldY + gs.tileSizeHalf - gs.screenHeightHalf;
+        int screenX = gs.getPlayer().getWorldX() + gs.tileSizeHalf - gs.screenWidthHalf;
+        int screenY = gs.getPlayer().getWorldY() + gs.tileSizeHalf - gs.screenHeightHalf;
         int renderScreenX1 = (screenX / gs.tileSize) * gs.tileSize - screenX;
         int renderScreenY1 = (screenY / gs.tileSize) * gs.tileSize - screenY;
         int tileX = screenX / gs.tileSize;

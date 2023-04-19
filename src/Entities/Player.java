@@ -35,8 +35,7 @@ public class Player extends MovingEntity {
         this.keys = keys;
 
         //Position and Dimensions
-        worldX = gs.tileSize * 25;
-        worldY = gs.tileSize * 5;
+        setStartingCoordinates(25, 5);
         screenX = gs.screenWidth / 2 - (gs.tileSize / 2);
         screenY = gs.screenHeight / 2 - (gs.tileSize / 2);
         solid = new Rectangle(13 * scale, 15 * scale, 7 * scale, 14 * scale);
@@ -60,6 +59,11 @@ public class Player extends MovingEntity {
         getImage();
     }
 
+    public void setStartingCoordinates(int x, int y) {
+        worldX = x * gs.tileSize;
+        worldY = y * gs.tileSize;
+    }
+
     public void getImage() throws IOException {
             up = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/MC/MC_Up_Stand.png")));
             down = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/MC/MC_Down_Stand.png")));
@@ -75,35 +79,38 @@ public class Player extends MovingEntity {
     }
 
     void objectChecker() {
-        int rowPlayer = (this.worldX + 16 * scale) / gs.tileSize, colPlayer = (this.worldY + 16 * scale) / gs.tileSize;
+        if (keys.ePress) {
+            int rowPlayer = (this.worldX + 16 * scale) / gs.tileSize, colPlayer = (this.worldY + 16 * scale) / gs.tileSize;
 
-        for(int i = 0; i < gs.obj.length; i++) {
-            if(gs.obj[i] != null) {
-                if (gs.obj[i].worldX / gs.tileSize == rowPlayer && gs.obj[i].worldY / gs.tileSize == colPlayer) {
-                    switch(gs.obj[i].name) {
-                        case "Boots":
-                            initSpeed += 1;
-                            gs.ui.messageCheck = true;
-                            gs.ui.objectNumber = i;
-                            gs.ui.message = gs.obj[i].message;
-                            gs.obj[i] = null;
-                            break;
+            for (int i = 0; i < gs.getObj().length; i++) {
+                if (gs.getObj(i) != null) {
+                    if (gs.getObj()[i].getWorldX() / gs.tileSize == rowPlayer && gs.getObj()[i].getWorldY() / gs.tileSize == colPlayer) {
+                        switch (gs.getObj()[i].getName()) {
+                            case "Boots":
+                                initSpeed += 1;
+                                gs.getUi().pickedUp(i);
+                                break;
+                        }
                     }
                 }
             }
+            keys.ePress = false;
         }
     }
 
     void npcChecker() {
-        int rowPlayer = (this.worldX + 16 * scale) / gs.tileSize, colPlayer = (this.worldY + 16 * scale) / gs.tileSize;
+        if (keys.tPress) {
+            int rowPlayer = (this.worldX + 16 * scale) / gs.tileSize, colPlayer = (this.worldY + 16 * scale) / gs.tileSize;
 
-        for(int i = 0; i < gs.npc.length; i++) {
-            if(gs.npc[i] != null) {
-                if (gs.npc[i].worldX / gs.tileSize == rowPlayer && gs.npc[i].worldY / gs.tileSize == colPlayer) {
-                    gs.ui.dialogueCheck = true;
-                    gs.ui.npcNumber = i;
+            for (int i = 0; i < gs.getNpc().length; i++) {
+                if (gs.getNpc()[i] != null) {
+                    if (gs.getNpc()[i].worldX / gs.tileSize == rowPlayer && gs.getNpc()[i].worldY / gs.tileSize == colPlayer) {
+                        gs.getUi().talkToNPC(i);
+                    }
                 }
             }
+            usingAbility = true;
+            keys.tPress = false;
         }
     }
 
@@ -153,9 +160,9 @@ public class Player extends MovingEntity {
     void collisionChecker() {
         collisionOn1 = false;
         collisionOn2 = false;
-        gs.cChecker.CheckTile(this);
-        gs.cChecker.CheckObject(this);
-        gs.cChecker.CheckNPC(this);
+        gs.getcChecker().CheckTile(this);
+        gs.getcChecker().CheckObject(this);
+        gs.getcChecker().CheckNPC(this);
         if(!collisionOn1) {
             switch (direction) {
                 case "up", "ul", "ur":
@@ -179,7 +186,7 @@ public class Player extends MovingEntity {
     }
 
     void directionSetter() {
-        if(!gs.ui.dialogueCheck) {
+        if(!gs.getUi().isDialogueCheck()) {
             standing = false;
             if (keys.wPress || keys.dPress || keys.aPress || keys.sPress) {
                 if (keys.wPress) {
@@ -254,25 +261,19 @@ public class Player extends MovingEntity {
                     break;
                 }
         }
+        if(HP == 0) {
+            image = dead;
+        }
         return image;
     }
 
     public void update() {
         if(HP >= 1) {
             if (!standing) {
-                if (!gs.ui.dialogueCheck) {
-                    collisionChecker();
-                }
+                collisionChecker();
             }
-            if (keys.ePress) {
-                objectChecker();
-                keys.ePress = false;
-            }
-            if (keys.tPress) {
-                npcChecker();
-                usingAbility = true;
-                keys.tPress = false;
-            }
+            objectChecker();
+            npcChecker();
             directionSetter();
             speedSetter();
         }

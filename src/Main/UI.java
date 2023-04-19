@@ -11,12 +11,14 @@ public class UI {
     Font font;
     BufferedImage ST_Bar, ST_One, HP_Bar, HP_One, MP_Bar, MP_One;
     BufferedImage itemFrame1, itemFrame2,itemFrame3,itemFrame4,itemFrame5,itemFrame6,itemFrame7,itemFrame8;
-    public boolean messageCheck = false;
-    public boolean dialogueCheck = false;
-    public int messageTimer, dialogueTimer;
-    public int objectNumber, npcNumber;
-    public int dialogueX, dialogueY;
-    public String message;
+
+    boolean messageCheck = false;
+    boolean dialogueCheck = false;
+
+    int messageTimer, dialogueTimer;
+    int objectNumber, npcNumber;
+    int dialogueX, dialogueY;
+    String message;
 
 
     public UI(GameScreen gs) throws IOException {
@@ -40,6 +42,22 @@ public class UI {
         dialogueX = gs.screenWidthHalf - 200;
         dialogueY = 30;
         dialogueTimer = 0;
+    }
+
+    public boolean isDialogueCheck() {
+        return dialogueCheck;
+    }
+
+    public void pickedUp(int index) {
+        gs.getUi().messageCheck = true;
+        gs.getUi().objectNumber = index;
+        gs.getUi().message = gs.getObj()[index].getMessage();
+        gs.setObj(index, null);
+    }
+
+    public void talkToNPC(int index) {
+        gs.getUi().dialogueCheck = true;
+        gs.getUi().npcNumber = index;
     }
 
     public void draw(Graphics2D g2) {

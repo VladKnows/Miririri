@@ -42,14 +42,14 @@ public class NPC extends Entity {
         this.toLine = toLine;
     }
 
-    public void draw(Graphics2D g2, GameScreen gs) {
-        int screenX = worldX - gs.player.worldX + gs.player.screenX;
-        int screenY = worldY - gs.player.worldY + gs.player.screenY;
+    public void draw(GameScreen gs, Graphics2D g2) {
+        int screenX = worldX - gs.getPlayer().worldX + gs.getPlayer().screenX;
+        int screenY = worldY - gs.getPlayer().worldY + gs.getPlayer().screenY;
 
-        if(worldX + gs.tileSize> gs.player.worldX - gs.player.screenX &&
-                worldX - gs.tileSize< gs.player.worldX + gs.player.screenX &&
-                worldY + gs.tileSize> gs.player.worldY - gs.player.screenY &&
-                worldY - gs.tileSize< gs.player.worldY + gs.player.screenY) {
+        if(worldX + gs.tileSize> gs.getPlayer().worldX - gs.getPlayer().screenX &&
+                worldX - gs.tileSize< gs.getPlayer().worldX + gs.getPlayer().screenX &&
+                worldY + gs.tileSize> gs.getPlayer().worldY - gs.getPlayer().screenY &&
+                worldY - gs.tileSize< gs.getPlayer().worldY + gs.getPlayer().screenY) {
             g2.drawImage(image, screenX, screenY, gs.tileSize, gs.tileSize, null);
         }
     }

@@ -62,8 +62,8 @@ public class Projectile_Moving extends Projectile {
     @Override
     public void update(GameScreen gs, int entityX, int entityY) {
         setCoord(entityX, entityY);
-        setTo(gs.player.worldX, gs.player.worldY);
+        setTo(gs.getPlayer().getWorldX(), gs.getPlayer().getWorldY());
         followPlayer();
-        gs.cChecker.CheckHit(gs.player, this);
+        gs.getcChecker().CheckHit(gs.getPlayer(), this);
     }
 }
