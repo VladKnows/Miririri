@@ -96,7 +96,7 @@ public abstract class Enemies extends MovingEntity {
         int screenX = worldX - gs.getPlayer().worldX + gs.getPlayer().screenX;
         int screenY = worldY - gs.getPlayer().worldY + gs.getPlayer().screenY;
 
-        if(worldX + gs.tileSize> gs.getPlayer().worldX - gs.getPlayer().screenX &&
+        if(worldX + gs.tileSize > gs.getPlayer().worldX - gs.getPlayer().screenX &&
                 worldX - gs.tileSize< gs.getPlayer().worldX + gs.getPlayer().screenX &&
                 worldY + gs.tileSize> gs.getPlayer().worldY - gs.getPlayer().screenY &&
                 worldY - gs.tileSize< gs.getPlayer().worldY + gs.getPlayer().screenY) {
@@ -127,10 +127,15 @@ public abstract class Enemies extends MovingEntity {
             castTime++;
             if(castTime >= castImages[onAbility].getTotalDuration()) {
                 abilityOn = true;
+                Ability ability = new Ability(abilities[onAbility]);
+                ability.init(worldX, worldY);
+                gs.enemyAbilities.add(ability);
             }
         }
         if(abilityOn) {
             abilityTimer++;
+
+            //resets
             if(abilityTimer >= abilities[onAbility].duration) {
                 abilityTimer = 0;
                 castTime = 0;
@@ -143,6 +148,7 @@ public abstract class Enemies extends MovingEntity {
                     abilities[onAbility].projectiles[i].timerUntilNextHit = 0;
                     abilities[onAbility].projectiles[i].coordSet = false;
                 }
+
                 for(int i = 0; i < castImages.length; i++) {
                     castImages[i].ResetToFirst();
                 }

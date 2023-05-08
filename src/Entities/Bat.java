@@ -24,6 +24,7 @@ public class Bat extends Enemies {
         loadAbilities();
         loadStandardImages(7, new int[] {7, 7, 7, 7, 7, 7, 7});
         loadCastImagesAndTimes(4, new int[] {2, 5, 2, 3}, new int[][] {{60, 40}, {5, 5, 10, 10, 10}, {5, 18}, {20, 20, 20}});
+
         loadAbilityPriority(new int[] {100, 200, 300});
     }
 

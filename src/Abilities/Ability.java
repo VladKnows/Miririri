@@ -6,6 +6,7 @@ import java.awt.*;
 
 public class Ability {
     public int range;
+    public int currentDuration = 0;
     public int duration;
     public boolean seeDuringAbility;
     public boolean moveDuringAbility;
@@ -17,6 +18,16 @@ public class Ability {
         this.seeDuringAbility = seeDuringAbility;
         this.moveDuringAbility = moveDuringAbility;
         this.projectiles = projectiles;
+    }
+
+    public Ability(Ability ability) {
+        this(ability.range, ability.duration, ability.seeDuringAbility, ability.moveDuringAbility, ability.projectiles);
+    }
+
+    public void init(int posX, int posY) {
+        for(int i = 0; i < projectiles.length; i++) {
+            projectiles[i].init(posX, posY);
+        }
     }
 
     public void update(GameScreen gs, int entityX, int entityY) {

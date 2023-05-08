@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Keys implements KeyListener{
-    public boolean wPress, aPress, sPress, dPress, ePress, tPress, shPress = false, escPress = false;
+    public boolean wPress, aPress, sPress, dPress, ePress, tPress, pPress, shPress = false, escPress = false;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -20,6 +20,7 @@ public class Keys implements KeyListener{
         if (code == KeyEvent.VK_D) { dPress = true; }
         if(code == KeyEvent.VK_E) { ePress = true; }
         if(code == KeyEvent.VK_T) { tPress = true; }
+        if(code == KeyEvent.VK_P) { pPress = true; }
         if (code == KeyEvent.VK_SHIFT) { shPress = true; }
         if (code == KeyEvent.VK_ESCAPE) { escPress = true; }
         if (code == KeyEvent.VK_L) { escPress = true; }
@@ -32,6 +33,7 @@ public class Keys implements KeyListener{
         if (code == KeyEvent.VK_A) { aPress = false; }
         if (code == KeyEvent.VK_S) { sPress = false; }
         if (code == KeyEvent.VK_D) { dPress = false; }
+        if (code == KeyEvent.VK_P) { pPress = false; }
         if (code == KeyEvent.VK_SHIFT) { shPress = false; }
     }
 }

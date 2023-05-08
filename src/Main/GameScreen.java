@@ -16,8 +16,8 @@ import java.util.Vector;
 
 public class GameScreen extends JPanel implements Runnable {
     //Tiles
-    final int originalTileSize = 32;
     public static final int scale = 3;
+    final static int originalTileSize = 32;
     public final int tileSize = originalTileSize * scale;
     public final int tileSizeHalf = tileSize / 2;
 
@@ -31,7 +31,6 @@ public class GameScreen extends JPanel implements Runnable {
 
     //Others
     int FPS = 60;
-
     Thread gameThread;
     Map []maps = new Map[3];
     Keys keys = new Keys();
@@ -47,8 +46,8 @@ public class GameScreen extends JPanel implements Runnable {
     Enemies []enemies = new Enemies[10];
 
     //Abilities
-    public Vector<Ability> enemyAbilities;
-    public Vector<Ability> playerAbilities;
+    public Vector<Ability> enemyAbilities = new Vector<>(30);
+    public Vector<Ability> playerAbilities = new Vector<>(30);
 
     //Constructor
     public GameScreen() throws IOException {
@@ -93,9 +92,39 @@ public class GameScreen extends JPanel implements Runnable {
         for(int i = 0; i < enemies.length; i++) {
             if(enemies[i] != null) {
                 enemies[i].update(player.getWorldX(), player.getWorldY());
-                if(enemies[i].isAbilityOn()) {
-                    enemies[i].getAbilities()[enemies[i].getOnAbility()].update(this, enemies[i].getWorldX(), enemies[i].getWorldY());
+            }
+        }
+        //CHANGED
+        //not with 0 index
+        for(int i = 0; i < enemyAbilities.size(); i++) {
+            if(enemyAbilities.elementAt(i) != null) {
+                enemyAbilities.elementAt(i).currentDuration++;
+                if(enemyAbilities.elementAt(i).currentDuration >= enemyAbilities.elementAt(i).duration) {
+                    enemyAbilities.elementAt(i).currentDuration = 0;
+                    enemyAbilities.remove(i);
                 }
+                else
+                    enemyAbilities.elementAt(i).update(this, enemies[0].getWorldX(), enemies[0].getWorldY());
+            }
+        }
+
+        //to move
+        for(int i = 0; i < playerAbilities.size(); i++) {
+            if(playerAbilities.elementAt(i) != null) {
+                playerAbilities.elementAt(i).currentDuration++;
+                if(playerAbilities.elementAt(i).currentDuration >= playerAbilities.elementAt(i).duration) {
+                    playerAbilities.elementAt(i).currentDuration = 0;
+                    for(int j = 0; j < playerAbilities.elementAt(i).projectiles.length; j++) {
+                        playerAbilities.elementAt(i).projectiles[j].image.ResetToFirst();
+                        playerAbilities.elementAt(i).projectiles[j].itHit = false;
+                        playerAbilities.elementAt(i).projectiles[j].timeUntilNextHit = 0;
+                        playerAbilities.elementAt(i).projectiles[j].coordSet = false;
+                    }
+                    playerAbilities.remove(i);
+                    player.usingAbility = false;
+                }
+                else
+                    playerAbilities.elementAt(i).update(this, player.getWorldX(), player.getWorldY());
             }
         }
     }
@@ -124,7 +153,17 @@ public class GameScreen extends JPanel implements Runnable {
         for(int i = 0; i < enemies.length; i++) {
             if(enemies[i] != null) {
                 enemies[i].draw(this, g2);
-                if(enemies[i].isAbilityOn()) { enemies[i].getAbilities()[enemies[i].getOnAbility()].draw(this, g2); }
+//                if(enemies[i].isAbilityOn()) { enemies[i].getAbilities()[enemies[i].getOnAbility()].draw(this, g2); }
+            }
+        }
+        for(int i = 0; i < enemyAbilities.size(); i++) {
+            if(enemyAbilities.elementAt(i) != null) {
+                enemyAbilities.elementAt(i).draw(this, g2);
+            }
+        }
+        for(int i = 0; i < playerAbilities.size(); i++) {
+            if(playerAbilities.elementAt(i) != null) {
+                playerAbilities.elementAt(i).draw(this, g2);
             }
         }
     }

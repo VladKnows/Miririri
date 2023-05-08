@@ -21,9 +21,16 @@ public class ImageVector {
         onImage = 0;
 
         images = new BufferedImage[numberOfImages];
-        String place = path + "/" + name + "_";
+        String place = path + "/" + name;
+        int j = 0, k = 0;
+        BufferedImage img = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(place + ".png")));
         for(int i = 0; i < numberOfImages; i++) {
-            images[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(place + "" + i + ".png")));
+            images[i] = img.getSubimage(j * 32, k * 32, 32, 32);
+            j++;
+            if(j > 3) {
+                j = 0;
+                k++;
+            }
         }
 
         for(int i = 0; i < numberOfImages; i++) {

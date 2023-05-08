@@ -26,6 +26,7 @@ abstract public class Projectile {
 
     public ImageVector image;
 
+
     protected Projectile(String name, int width, int height, int deviationX, int deviationY, Shape solid, int damage, int numberOfImages, int []durationsOfImages) throws IOException {
         this.name = name;
         this.width = width;
@@ -48,13 +49,11 @@ abstract public class Projectile {
 
     abstract public void update(GameScreen gs, int entityX, int entityY);
 
-    void setCoord(int x, int y) {
-        if(!coordSet) {
-            this.x = x - deviationX;
-            this.y = y - deviationY;
-            coordSet = true;
-        }
+    void init(int posX, int posY) {
+        setCoord(posX, posY);
     }
+
+    abstract void setCoord(int x, int y);
 
     public void draw(GameScreen gs, Graphics2D g2) {
         int screenX = x - gs.getPlayer().getWorldX() + gs.getPlayer().screenX;

@@ -1,5 +1,9 @@
 package Entities;
 
+import Abilities.Ability;
+import Abilities.Ability_Friendly;
+import Abilities.Projectile;
+import Abilities.Projectile_Moving;
 import Main.GameScreen;
 import Main.Keys;
 import Util.ImageVector;
@@ -29,6 +33,8 @@ public class Player extends MovingEntity {
     public int onAbility = 0;
     public boolean usingAbility = false;
 
+    Ability_Friendly []abilities = new Ability_Friendly[4];
+
     public Player(GameScreen gs, Keys keys) throws IOException {
         //Other
         this.gs = gs;
@@ -53,7 +59,7 @@ public class Player extends MovingEntity {
         standing = false;
 
         //Abilities
-
+        abilities[0] = new Ability_Friendly(0, 180, true, true, new Projectile[] {new Projectile_Moving("Player_Ability", 32, 32, -48, -110, 2000, 2000, 1, true, new Rectangle(32, 32, 32, 32), 20, 1, new int[] {1000})});
 
         //Images
         getImage();
@@ -111,6 +117,18 @@ public class Player extends MovingEntity {
             }
             usingAbility = true;
             keys.tPress = false;
+        }
+    }
+
+    void castAbility() {
+        if(keys.pPress && !usingAbility) {
+            Ability_Friendly ability = new Ability_Friendly(abilities[onAbility]);
+            ability.init(worldX, worldY);
+            gs.playerAbilities.add(ability);
+            
+
+            usingAbility = true;
+            keys.pPress = false;
         }
     }
 
@@ -272,6 +290,7 @@ public class Player extends MovingEntity {
             if (!standing) {
                 collisionChecker();
             }
+            castAbility();
             objectChecker();
             npcChecker();
             directionSetter();

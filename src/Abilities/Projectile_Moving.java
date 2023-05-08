@@ -38,8 +38,7 @@ public class Projectile_Moving extends Projectile {
         }
     }
 
-    public void followPlayer() {
-        if(!setOnce) {
+    public void followEntity() {
             int distanceX, distanceY;
             distanceX = x - toX;
             distanceY = y - toY;
@@ -56,6 +55,14 @@ public class Projectile_Moving extends Projectile {
                 else
                     x -= speed;
             }
+    }
+
+    @Override
+    void setCoord(int x, int y) {
+        if(!coordSet) {
+            this.x = x - deviationX;
+            this.y = y - deviationY;
+            coordSet = true;
         }
     }
 
@@ -63,7 +70,7 @@ public class Projectile_Moving extends Projectile {
     public void update(GameScreen gs, int entityX, int entityY) {
         setCoord(entityX, entityY);
         setTo(gs.getPlayer().getWorldX(), gs.getPlayer().getWorldY());
-        followPlayer();
+        followEntity();
         gs.getcChecker().CheckHit(gs.getPlayer(), this);
     }
 }

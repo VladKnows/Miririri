@@ -17,8 +17,16 @@ public class Projectile_Static extends Projectile{
     }
 
     @Override
+    void setCoord(int x, int y) {
+        if(!coordSet) {
+            this.x = x - deviationX;
+            this.y = y - deviationY;
+            coordSet = true;
+        }
+    }
+
+    @Override
     public void update(GameScreen gs, int entityX, int entityY) {
-        setCoord(entityX, entityY);
         gs.getcChecker().CheckHit(gs.getPlayer(), this);
     }
     

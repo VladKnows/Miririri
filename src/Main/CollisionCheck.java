@@ -15,6 +15,16 @@ public class CollisionCheck {
         this.gs = gs;
     }
 
+    private Shape MakeShapeAt(Shape shape, int x, int y) {
+        AffineTransform a0 = AffineTransform.getTranslateInstance(x, y);
+        Shape a = a0.createTransformedShape(shape);
+        return a;
+    }
+
+    private void CheckIfEntityIntersectsTile(MovingEntity entity) {
+
+    }
+
     public void CheckHit(Player player, Projectile projectile) {
         Rectangle p = new Rectangle(player.getWorldX() + player.getSolid().x, player.getWorldY() + player.getSolid().y, player.getSolid().width, player.getSolid().height);
         AffineTransform a0 = AffineTransform.getTranslateInstance(projectile.x, projectile.y);
