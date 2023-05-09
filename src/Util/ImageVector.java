@@ -14,7 +14,7 @@ public class ImageVector {
     int onFrame;
     int totalDuration = 0;
 
-    public ImageVector(String path, String name, int numberOfImages, int[] durationOfImages) throws IOException {
+    public ImageVector(String path, String name, int imageSize, int numberOfImages, int[] durationOfImages) throws IOException {
         this.numberOfImages = numberOfImages;
         this.durationOfImages = durationOfImages;
         onFrame = 0;
@@ -25,7 +25,7 @@ public class ImageVector {
         int j = 0, k = 0;
         BufferedImage img = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(place + ".png")));
         for(int i = 0; i < numberOfImages; i++) {
-            images[i] = img.getSubimage(j * 32, k * 32, 32, 32);
+            images[i] = img.getSubimage(j * imageSize, k * imageSize, imageSize, imageSize);
             j++;
             if(j > 3) {
                 j = 0;
@@ -36,6 +36,10 @@ public class ImageVector {
         for(int i = 0; i < numberOfImages; i++) {
             totalDuration += durationOfImages[i];
         }
+    }
+
+    public ImageVector(String path, String name, int numberOfImages, int[] durationOfImages) throws IOException {
+        this(path, name, 32, numberOfImages, durationOfImages);
     }
 
     public int getTotalDuration() {

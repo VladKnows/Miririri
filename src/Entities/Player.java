@@ -125,7 +125,6 @@ public class Player extends MovingEntity {
             Ability_Friendly ability = new Ability_Friendly(abilities[onAbility]);
             ability.init(worldX, worldY);
             gs.playerAbilities.add(ability);
-            
 
             usingAbility = true;
             keys.pPress = false;

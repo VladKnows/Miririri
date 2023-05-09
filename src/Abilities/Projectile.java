@@ -5,6 +5,7 @@ import Util.ImageVector;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Objects;
 
 abstract public class Projectile {
     String name;
@@ -37,7 +38,11 @@ abstract public class Projectile {
         this.damage = damage;
         this.coordSet = false;
 
-        image = new ImageVector("/Abilities", name, numberOfImages, durationsOfImages);
+        if(!Objects.equals(name, "Ultra_Sound")) {
+            image = new ImageVector("/Abilities", name, numberOfImages, durationsOfImages);
+        } else {
+            image = new ImageVector("/Abilities", name, 288, numberOfImages, durationsOfImages);
+        }
     }
 
     protected Projectile(String name, int width, int height, int deviationX, int deviationY, Shape solid, int damage, int timeUntilNextHit, int numberOfImages, int []durationsOfImages) throws IOException {

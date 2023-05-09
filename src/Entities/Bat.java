@@ -32,7 +32,7 @@ public class Bat extends Enemies {
     void loadAbilities() throws IOException {
         abilities = new Ability[4];
         abilities[0] = new Ability(100, 180, true, false, new Projectile[]{new Projectile_Static("Ultra_Sound", 416, 416, 160, 160, new Ellipse2D.Double(0, 0, 416, 416), 3, 15, 6, new int[] {10, 10, 10, 10, 10, 10})});
-        abilities[1] = new Ability(60, 40, false, false, new Projectile[]{new Projectile_Static("Bite", 156, 156, 30, 30, new Ellipse2D.Double(0, 0, 156, 156), 30, 2, new int[] {10, 30})});
+        abilities[1] = new Ability(60, 40, false, false, new Projectile[]{new Projectile_Static("Bat_Bite", 156, 156, 30, 30, new Ellipse2D.Double(0, 0, 156, 156), 30, 2, new int[] {10, 30})});
         abilities[2] = new Ability(40, 40, false, false, new Projectile[]{new Projectile_Static("Wing_Swing", 96, 96, 0, 0, new Rectangle(0, 0, 96, 96), 40, 5, new int[] {5, 5, 5, 5, 20})});
         abilities[3] = new Ability(150, 300, true, true, new Projectile[]{new Projectile_Moving("Bat_Ball", 96, 96, 0, -50, gs.getPlayer().worldX, gs.getPlayer().worldY, 3, false, new Ellipse2D.Double(0, 0, 96, 96), 5, 10,11, new int[] {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2})});
     }
