@@ -4,9 +4,11 @@ import Abilities.Ability;
 import Main.GameScreen;
 import Util.ImageVector;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Objects;
 
 import static java.lang.Math.abs;
 
@@ -28,6 +30,7 @@ public abstract class Enemies extends MovingEntity {
 
     ImageVector []castImages;
     ImageVector images;
+    BufferedImage dead;
 
     protected Enemies(GameScreen gs, String name, int worldX, int worldY, int HP) {
         this.gs = gs;
@@ -49,6 +52,7 @@ public abstract class Enemies extends MovingEntity {
 
     void loadStandardImages(int numberOfImages, int []numberOfFrames) throws IOException {
         images = new ImageVector("/Enemies/" + name, name, numberOfImages, numberOfFrames);
+        dead = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Enemies/" + name + "/" + name +  "_Dead" + ".png")));
     }
 
     void loadCastImagesAndTimes(int numberOfAbilities, int []numberOfImages, int [][]numberOfFramesPerImage) throws IOException {
@@ -82,13 +86,18 @@ public abstract class Enemies extends MovingEntity {
     }
 
     BufferedImage imageGetter() {
-        if(!castOn || (abilityOn && abilities[onAbility].moveDuringAbility)) {
-            return images.GetImage();
-        } else {
-            if(!abilityOn || abilities[onAbility].seeDuringAbility)
-                return castImages[onAbility].GetImage();
-            else
-                return null;
+        if(HP > 0) {
+            if (!castOn || (abilityOn && abilities[onAbility].moveDuringAbility)) {
+                return images.GetImage();
+            } else {
+                if (!abilityOn || abilities[onAbility].seeDuringAbility)
+                    return castImages[onAbility].GetImage();
+                else
+                    return null;
+            }
+        }
+        else {
+            return dead;
         }
     }
 
@@ -209,15 +218,17 @@ public abstract class Enemies extends MovingEntity {
 
 
     public void update(int x, int y) {
-        int distanceX, distanceY;
-        distanceX = worldX - x;
-        distanceY = worldY - y;
+        if(HP > 0) {
+            int distanceX, distanceY;
+            distanceX = worldX - x;
+            distanceY = worldY - y;
 
-        if(goAfterPlayer(distanceX, distanceY)) {
-            chooseAbility();
-            checkIfInRange(distanceX, distanceY);
-            checkDirection(distanceX, distanceY);
+            if (goAfterPlayer(distanceX, distanceY)) {
+                chooseAbility();
+                checkIfInRange(distanceX, distanceY);
+                checkDirection(distanceX, distanceY);
+            }
+            tryCastOrAbility();
         }
-        tryCastOrAbility();
     }
 }

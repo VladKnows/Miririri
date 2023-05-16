@@ -7,6 +7,7 @@ public class MovingEntity extends Entity {
 
     public boolean standing;
     public String direction;
+    public int directionNumber;
 
     public boolean collisionOn1 = false;
     public boolean collisionOn2 = false;

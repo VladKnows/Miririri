@@ -2,7 +2,6 @@ package Main;
 
 import Abilities.Projectile;
 import Entities.MovingEntity;
-import Entities.Player;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -15,18 +14,8 @@ public class CollisionCheck {
         this.gs = gs;
     }
 
-    private Shape MakeShapeAt(Shape shape, int x, int y) {
-        AffineTransform a0 = AffineTransform.getTranslateInstance(x, y);
-        Shape a = a0.createTransformedShape(shape);
-        return a;
-    }
-
-    private void CheckIfEntityIntersectsTile(MovingEntity entity) {
-
-    }
-
-    public void CheckHit(Player player, Projectile projectile) {
-        Rectangle p = new Rectangle(player.getWorldX() + player.getSolid().x, player.getWorldY() + player.getSolid().y, player.getSolid().width, player.getSolid().height);
+    public void CheckHit(MovingEntity entity, Projectile projectile) {
+        Rectangle p = new Rectangle(entity.getWorldX() + entity.getSolid().x, entity.getWorldY() + entity.getSolid().y, entity.getSolid().width, entity.getSolid().height);
         AffineTransform a0 = AffineTransform.getTranslateInstance(projectile.x, projectile.y);
         Shape a = a0.createTransformedShape(projectile.solid);
 
@@ -40,19 +29,20 @@ public class CollisionCheck {
         }
 
         if(!projectile.itHit && a.intersects(p)) {
-            player.HP -= projectile.damage;
-            projectile.itHit = true;
+            entity.HP -= projectile.damage;
+            projectile.itHitOne = true;
         }
-        if(player.HP < 0) {
-            player.HP = 0;
+
+        if(entity.HP < 0) {
+            entity.HP = 0;
         }
     }
 
     public void CheckTile(MovingEntity entity) {
         int entityLeftWorldX = entity.getWorldX() + entity.getSolid().x;
-        int entityRightWorldX = entity.getWorldX() + entity.getSolid().x + entity.getSolid().width;
+        int entityRightWorldX = entityLeftWorldX + entity.getSolid().width;
         int entityTopWorldY = entity.getWorldY() + entity.getSolid().y;
-        int entityBottomWorldY = entity.getWorldY() + entity.getSolid().y + entity.getSolid().height;
+        int entityBottomWorldY = entityTopWorldY + entity.getSolid().height;
 
         int entityLeftCol = entityLeftWorldX / gs.tileSize;
         int entityRightCol = entityRightWorldX / gs.tileSize;

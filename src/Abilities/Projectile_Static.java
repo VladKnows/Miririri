@@ -6,13 +6,13 @@ import java.awt.*;
 import java.io.IOException;
 
 public class Projectile_Static extends Projectile{
-    public Projectile_Static(String name, int width, int height, int deviationX, int deviationY, Shape solid, int damage, int numberOfImages, int[] durationsOfImages) throws IOException {
-        super(name, width, height, deviationX, deviationY, solid, damage, numberOfImages, durationsOfImages);
+    public Projectile_Static(boolean friendly, boolean rotatable, boolean seeAfterHit, String name, int width, int height, int deviationX, int deviationY, Shape solid, int damage, int numberOfImages, int[] durationsOfImages) throws IOException {
+        super(friendly, rotatable, seeAfterHit, name, width, height, deviationX, deviationY, solid, damage, numberOfImages, durationsOfImages);
         stationary = true;
     }
 
-    public Projectile_Static(String name, int width, int height, int deviationX, int deviationY, Shape solid, int damage, int timeUntilNextHit, int numberOfImages, int[] durationsOfImages) throws IOException {
-        super(name, width, height, deviationX, deviationY, solid, damage, timeUntilNextHit, numberOfImages, durationsOfImages);
+    public Projectile_Static(boolean friendly, boolean rotatable, boolean seeAfterHit, String name, int width, int height, int deviationX, int deviationY, Shape solid, int damage, int timeUntilNextHit, int numberOfImages, int[] durationsOfImages) throws IOException {
+        super(friendly, rotatable, seeAfterHit, name, width, height, deviationX, deviationY, solid, damage, timeUntilNextHit, numberOfImages, durationsOfImages);
         stationary = true;
     }
 
@@ -27,7 +27,22 @@ public class Projectile_Static extends Projectile{
 
     @Override
     public void update(GameScreen gs, int entityX, int entityY) {
-        gs.getcChecker().CheckHit(gs.getPlayer(), this);
+        if(!friendly) {
+            gs.getcChecker().CheckHit(gs.getPlayer(), this);
+            if(itHitOne) {
+                itHit = true;
+                itHitOne = false;
+            }
+        } else {
+            for(int i = 0; i < gs.enemies.length; i++) {
+                if(gs.enemies[i] != null && gs.enemies[i].HP != 0)
+                    gs.getcChecker().CheckHit(gs.enemies[i], this);
+            }
+            if(itHitOne) {
+                itHit = true;
+                itHitOne = false;
+            }
+        }
     }
     
 }

@@ -28,6 +28,7 @@ public class Placement {
 
     public void placeEnemy() throws IOException {
         gs.enemies[0] = new Bat(gs, 23 * gs.tileSize,9 * gs.tileSize,200);
+        gs.enemies[1] = new Bat(gs, 18 * gs.tileSize,10 * gs.tileSize,200);
 //        gs.enemies[1] = new Rock_Head(gs, 15 * gs.tileSize, 20 * gs.tileSize, 100);
     }
 }

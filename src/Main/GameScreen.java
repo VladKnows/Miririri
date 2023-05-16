@@ -43,7 +43,7 @@ public class GameScreen extends JPanel implements Runnable {
     NPC []npc = new NPC[8];
     Player player = new Player(this, keys);
     SuperObject []obj = new SuperObject[10];
-    Enemies []enemies = new Enemies[10];
+    public Enemies []enemies = new Enemies[10];
 
     //Abilities
     public Vector<Ability> enemyAbilities = new Vector<>(30);
@@ -104,7 +104,7 @@ public class GameScreen extends JPanel implements Runnable {
                     enemyAbilities.remove(i);
                 }
                 else
-                    enemyAbilities.elementAt(i).update(this, enemies[0].getWorldX(), enemies[0].getWorldY());
+                    enemyAbilities.elementAt(i).update(this, 0, 0);
             }
         }
 
