@@ -88,10 +88,16 @@ public abstract class Enemies extends MovingEntity {
     BufferedImage imageGetter() {
         if(HP > 0) {
             if (!castOn || (abilityOn && abilities[onAbility].moveDuringAbility)) {
-                return images.GetImage();
+                if(!GameScreen.timeStop)
+                    return images.GetImage();
+                else
+                    return images.GetCurrentImage();
             } else {
                 if (!abilityOn || abilities[onAbility].seeDuringAbility)
-                    return castImages[onAbility].GetImage();
+                    if(!GameScreen.timeStop)
+                        return castImages[onAbility].GetImage();
+                    else
+                        return castImages[onAbility].GetCurrentImage();
                 else
                     return null;
             }
@@ -102,6 +108,18 @@ public abstract class Enemies extends MovingEntity {
     }
 
     public void draw(GameScreen gs, Graphics2D g2) {
+        int screenX = worldX - gs.getPlayer().worldX + gs.getPlayer().screenX;
+        int screenY = worldY - gs.getPlayer().worldY + gs.getPlayer().screenY;
+
+        if(worldX + gs.tileSize > gs.getPlayer().worldX - gs.getPlayer().screenX &&
+                worldX - gs.tileSize< gs.getPlayer().worldX + gs.getPlayer().screenX &&
+                worldY + gs.tileSize> gs.getPlayer().worldY - gs.getPlayer().screenY &&
+                worldY - gs.tileSize< gs.getPlayer().worldY + gs.getPlayer().screenY) {
+            g2.drawImage(imageGetter(), screenX, screenY, gs.tileSize, gs.tileSize, null);
+        }
+    }
+
+    public void draw(GameScreen gs, Graphics2D g2, boolean ok) {
         int screenX = worldX - gs.getPlayer().worldX + gs.getPlayer().screenX;
         int screenY = worldY - gs.getPlayer().worldY + gs.getPlayer().screenY;
 
@@ -190,7 +208,7 @@ public abstract class Enemies extends MovingEntity {
     //AI
     boolean goAfterPlayer(int distanceX, int distanceY) {
         boolean ok;
-        if(abs(distanceX) < 1000 && abs(distanceY) < 1000 && (!castOn || (abilityOn && abilities[onAbility].moveDuringAbility))) {
+        if(abs(distanceX) < 800 && abs(distanceY) < 800 && (!castOn || (abilityOn && abilities[onAbility].moveDuringAbility))) {
             ok = true;
 
             collisionOn1 = false;
@@ -218,7 +236,7 @@ public abstract class Enemies extends MovingEntity {
 
 
     public void update(int x, int y) {
-        if(HP > 0) {
+        if(HP > 0 && !GameScreen.timeStop) {
             int distanceX, distanceY;
             distanceX = worldX - x;
             distanceY = worldY - y;

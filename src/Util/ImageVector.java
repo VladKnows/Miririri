@@ -63,6 +63,10 @@ public class ImageVector {
         return images[onImage];
     }
 
+    public BufferedImage GetCurrentImage() {
+        return images[onImage];
+    }
+
     public BufferedImage GetImage(double proportion) {
         int duration = (int) ((double) durationOfImages[onImage] / proportion);
         onFrame++;

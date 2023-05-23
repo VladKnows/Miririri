@@ -1,6 +1,6 @@
 package Entities;
 
-public class MovingEntity extends Entity {
+public abstract class MovingEntity extends Entity {
     public int HP;
     public int initSpeed;
     public int speed;

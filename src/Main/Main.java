@@ -10,7 +10,7 @@ public class Main {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setTitle("Miriri");
 
-        GameScreen gs = new GameScreen();
+        GameScreen gs = GameScreen.getInstance();
         window.add(gs);
         window.pack();
 

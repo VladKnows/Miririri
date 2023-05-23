@@ -76,7 +76,7 @@ public class Projectile_Moving extends Projectile {
     @Override
     public void update(GameScreen gs, int entityX, int entityY) {
         setCoord(entityX, entityY);
-        setTo(gs.getPlayer().getWorldX(), gs.getPlayer().getWorldY());
+        setTo(gs.getPlayer().getWorldX() - deviationX, gs.getPlayer().getWorldY() - deviationY);
         followEntity();
         if(!friendly) {
             gs.getcChecker().CheckHit(gs.getPlayer(), this);
@@ -87,8 +87,8 @@ public class Projectile_Moving extends Projectile {
         }
         else {
             for(int i = 0; i < gs.enemies.length; i++) {
-                if(gs.enemies[i] != null && gs.enemies[i].HP != 0)
-                    gs.getcChecker().CheckHit(gs.enemies[i], this);
+                if(gs.enemies[gs.onMap][i] != null && gs.enemies[gs.onMap][i].HP != 0)
+                    gs.getcChecker().CheckHit(gs.enemies[gs.onMap][i], this);
             }
             if(itHitOne) {
                 itHit = true;

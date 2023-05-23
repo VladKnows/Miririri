@@ -1,8 +1,13 @@
 package Entities;
 
+import Abilities.Ability;
+import Abilities.Projectile;
+import Abilities.Projectile_Moving;
+import Abilities.Projectile_Static;
 import Main.GameScreen;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.io.IOException;
 
 import static Main.GameScreen.scale;
@@ -17,23 +22,17 @@ public class Rock_Head extends Enemies {
         this.speed = 1;
 
         loadAbilities();
+        loadStandardImages(4, new int[] {10, 10, 10, 10});
+        loadCastImagesAndTimes(2, new int[] {8, 15}, new int[][] {{6, 6, 6, 6, 6, 6, 6, 16}, {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 10}});
 
-//        this.numberOfImages = 4;
-//        loadStandardImages(4);
-//
-//        castTimes = new int[] {60};
-//        loadCastImagesAndTimes(1, new int[] {8}, new int[][] {{6, 6, 23, 6, 6, 6, 6, 1}});
+        loadAbilityPriority(new int[] {400});
     }
 
     @Override
     void loadAbilities() throws IOException {
-//        abilities = new Ability[1];
-//        abilities[0] = new Abilities("Ground_Rise", 400, 400, 0, 0, 400, 400,60, 30, 5, new int[] {6, 6, 40, 4, 4}, true, false, 0, true, 100, 152, 152);
-//        abilities[1] = new Abilities("Bite", 156, 156, 0, 0, 156, 156,40,30, 2, new int[] {10, 30}, false, false, 0, false, 30, 30, 30);
-//        abilities[2] = new Abilities("Wing_Swing", 96, 96, 0, 0, 96, 96,40, 20, 5, new int[] {5, 5, 5, 5, 20}, false, false, 0, false, 20, 0, 0);
-//        abilities[3] = new Abilities("Bat_Ball", 96, 96, 18, 18, 66 , 60,250, 40, 11, new int[] {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}, true, true, 3, true, 180, 0, -80);
-//
-//        onAbility = 3;
+        abilities = new Ability[2];
+        abilities[0] = new Ability(100, 90, true, false, new Projectile[]{new Projectile_Static(false, false, true, "Ground_Rise", 416, 416, 160, 200, new Rectangle(30, 30, 356, 356), 30, 5, new int[] {5, 5, 74, 3, 3})});
+        abilities[1] = new Ability(300, 250, true, false, new Projectile[]{new Projectile_Moving(false, false, false, "Tornado", 192, 192, 48, 48, gs.getPlayer().worldX + 48, gs.getPlayer().worldY + 48, 3, false, new Rectangle(20, 0, 152, 180), 50, 4, new int[] {3, 3, 3, 3})});
     }
 
 }

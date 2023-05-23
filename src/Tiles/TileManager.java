@@ -14,13 +14,13 @@ import java.util.Objects;
 public class TileManager {
     GameScreen gs;
     public Tile[] tile = new Tile[80];
-    public int [][]mapTile;
+    public int [][][]mapTile;
 
     public TileManager(GameScreen gs, int mapNumber) throws IOException {
         this.gs = gs;
 
         getTileImage();
-        mapTile = new int[gs.getMaps()[mapNumber].maxWorldCol][gs.getMaps()[mapNumber].maxWorldRow];
+        mapTile = new int[3][gs.getMaps()[mapNumber].maxWorldCol][gs.getMaps()[mapNumber].maxWorldRow];
         loadMap("/res/Maps/" + gs.getMaps()[mapNumber].source, mapNumber);
     }
 
@@ -35,7 +35,7 @@ public class TileManager {
             String []numbers = s.split(" ");
             for(int j = 0; j < gs.getMaps()[mapNumber].maxWorldCol; j++) {
                 int num = Integer.parseInt(numbers[j]);
-                mapTile[j][i] = num;
+                mapTile[mapNumber][j][i] = num;
             }
         }
     }
@@ -96,7 +96,8 @@ public class TileManager {
 
         for(int i = renderScreenX1; i < gs.screenWidth; i += gs.tileSize, tileX++, tileY = tileYCopy) {
             for(int j = renderScreenY1; j < gs.screenHeight; j += gs.tileSize, tileY++) {
-                g2.drawImage(tile[mapTile[tileX][tileY]].image, i, j, null);
+                if(tileX < gs.getMaps(gs.onMap).maxWorldCol && tileX >= 0 && tileY < gs.getMaps(gs.onMap).maxWorldRow && tileY >= 0)
+                g2.drawImage(tile[mapTile[gs.onMap][tileX][tileY]].image, i, j, null);
             }
         }
     }

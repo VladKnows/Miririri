@@ -1,18 +1,24 @@
 package Objects;
 
+import Entities.Entity;
 import Main.GameScreen;
+import Main.UI;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
-public class SuperObject {
+public abstract class SuperObject {
+    public static int markedForDeletion = 0;
+
     String name;
     BufferedImage image;
     int worldX, worldY;
     String message;
 
-    boolean collision = false;
-    Rectangle solid;
+    public final static int OBJECT_ITEM = 0;
+    public final static int OBJECT_POWERUP = 1;
+    public final static int OBJECT_TELEPORTER = 2;
 
     public void draw(GameScreen gs, Graphics2D g2) {
         int screenX = worldX - gs.getPlayer().getWorldX() + gs.getPlayer().screenX;
@@ -27,10 +33,13 @@ public class SuperObject {
     }
 
     //Getters
-    public boolean isCollision() { return collision; }
+    public BufferedImage getImage() { return  image; }
     public int getWorldX() { return worldX; }
     public int getWorldY() { return worldY; }
-    public Rectangle getSolid() { return solid; }
     public String getName() { return name; }
     public String getMessage() { return message; }
+
+    public void update() throws IOException {
+        UI.loadMessage(message);
+    }
 }

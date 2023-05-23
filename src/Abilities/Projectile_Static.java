@@ -29,19 +29,15 @@ public class Projectile_Static extends Projectile{
     public void update(GameScreen gs, int entityX, int entityY) {
         if(!friendly) {
             gs.getcChecker().CheckHit(gs.getPlayer(), this);
-            if(itHitOne) {
-                itHit = true;
-                itHitOne = false;
-            }
         } else {
             for(int i = 0; i < gs.enemies.length; i++) {
-                if(gs.enemies[i] != null && gs.enemies[i].HP != 0)
-                    gs.getcChecker().CheckHit(gs.enemies[i], this);
+                if(gs.enemies[gs.onMap][i] != null && gs.enemies[gs.onMap][i].HP != 0)
+                    gs.getcChecker().CheckHit(gs.enemies[gs.onMap][i], this);
             }
-            if(itHitOne) {
-                itHit = true;
-                itHitOne = false;
-            }
+        }
+        if(itHitOne) {
+            itHit = true;
+            itHitOne = false;
         }
     }
     

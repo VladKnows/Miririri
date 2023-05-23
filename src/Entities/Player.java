@@ -1,4 +1,6 @@
 package Entities;
+import Objects.SuperObject;
+
 
 import Abilities.Ability_Friendly;
 import Abilities.Projectile;
@@ -6,7 +8,9 @@ import Abilities.Projectile_Moving;
 import Abilities.Projectile_Static;
 import Main.GameScreen;
 import Main.Keys;
+import Main.Mouse;
 import Util.ImageVector;
+import Objects.Item;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,8 +22,11 @@ import java.util.Objects;
 import static Main.GameScreen.scale;
 
 public class Player extends MovingEntity {
+    static Player instance = null;
+
     GameScreen gs;
     Keys keys;
+    Mouse mouse;
 
     public int screenX, screenY;
     BufferedImage up, down, right, left, dead;
@@ -30,6 +37,8 @@ public class Player extends MovingEntity {
 
     public int MP;
     public int ST, ST_CounterInc = 0, ST_CounterDec = 0;
+    public int maxHP, maxMP, maxST;
+
     public boolean exhausted = false;
 
     public int onAbility = 0;
@@ -42,11 +51,18 @@ public class Player extends MovingEntity {
     int castTime = 0;
     public int directionAtCast = 0;
     int []timeForAbilityCast = new int[] {20, 39, 40, 51};
+    public boolean []abilityUnlocked = new boolean[] {false, false, false, false};
 
-    public Player(GameScreen gs, Keys keys) throws IOException {
+    public Item []items = new Item[4];
+    public int []numberOfItems = new int[4];
+    int currentNumberOfItems = 0;
+    public int onItem = 0;
+
+    Player(GameScreen gs, Keys keys, Mouse mouse) throws IOException {
         //Other
         this.gs = gs;
         this.keys = keys;
+        this.mouse = mouse;
 
         //Position and Dimensions
         setStartingCoordinates(25, 5);
@@ -58,7 +74,11 @@ public class Player extends MovingEntity {
         HP = 100;
         ST = 100;
         MP = 300;
-        initSpeed = 2;
+        maxHP = HP;
+        maxMP = MP;
+        maxST = ST;
+
+        initSpeed = 10;
         speed = 2;
         speedProportion = 1;
 
@@ -74,6 +94,17 @@ public class Player extends MovingEntity {
 
         //Images
         getImage();
+    }
+
+    public static Player getInstance(GameScreen gs, Keys keys, Mouse mouse) throws IOException {
+        if(instance == null) {
+            instance = new Player(gs, keys, mouse);
+        }
+        return instance;
+    }
+
+    public static Player getInstance() throws IOException {
+        return instance;
     }
 
     public void setStartingCoordinates(int x, int y) {
@@ -109,17 +140,93 @@ public class Player extends MovingEntity {
             dead = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/MC/MC_Dead.png")));
     }
 
-    void objectChecker() {
+    int checkIfItemExists(String name) {
+        for(int i = 0; i < 4; i++) {
+            if(items[i] != null)
+                if(Objects.equals(items[i].getName(), name))
+                    return i;
+        }
+        return -1;
+    }
+
+    int firstEmptyItem() {
+        for(int i = 0; i < 4; i++) {
+            if(items[i] == null)
+                return i;
+        }
+        return 0;
+    }
+
+    void objectChecker() throws IOException {
         if (keys.ePress) {
             int rowPlayer = (this.worldX + 16 * scale) / gs.tileSize, colPlayer = (this.worldY + 16 * scale) / gs.tileSize;
 
             for (int i = 0; i < gs.getObj().length; i++) {
                 if (gs.getObj(i) != null) {
-                    if (gs.getObj()[i].getWorldX() / gs.tileSize == rowPlayer && gs.getObj()[i].getWorldY() / gs.tileSize == colPlayer) {
-                        switch (gs.getObj()[i].getName()) {
+                    if (gs.getObj(i).getWorldX() / gs.tileSize == rowPlayer && gs.getObj(i).getWorldY() / gs.tileSize == colPlayer) {
+                        SuperObject.markedForDeletion = i;
+                        switch (gs.getObj(i).getName()) {
                             case "Boots":
                                 initSpeed += 1;
-                                gs.getUi().pickedUp(i);
+                                GameScreen.getInstance().getObj(i).update();
+                                break;
+                            case "Sword":
+                                for(int j = 0; j < 4; j++) {
+                                    for(int k = 0; k < abilities[j].projectiles.length; k++) {
+                                        switch (j) {
+                                            case 0:
+                                                abilities[j].projectiles[k].damage += 5;
+                                                break;
+                                            case 1:
+                                                abilities[j].projectiles[k].damage++;
+                                                break;
+                                            case 2:
+                                                abilities[j].projectiles[k].damage += 20;
+                                                break;
+                                            case 3:
+                                                abilities[j].projectiles[k].damage += 40;
+                                                break;
+                                        }
+                                    }
+                                }
+                                GameScreen.getInstance().getObj(i).update();
+                                break;
+                            case "Gem":
+                                maxMP += 40;
+                                GameScreen.getInstance().getObj(i).update();
+                                break;
+                            case "Scroll_Ability_0":
+                                abilityUnlocked[0] = true;
+                                GameScreen.getInstance().getObj(i).update();
+                                break;
+                            case "Scroll_Ability_1":
+                                abilityUnlocked[1] = true;
+                                GameScreen.getInstance().getObj(i).update();
+                                break;
+                            case "Scroll_Ability_2":
+                                abilityUnlocked[2] = true;
+                                GameScreen.getInstance().getObj(i).update();
+                                break;
+                            case "Scroll_Ability_3":
+                                abilityUnlocked[3] = true;
+                                GameScreen.getInstance().getObj(i).update();
+                                break;
+                            case "Health_Potion", "Mana_Potion", "Stamina_Potion", "Hour_Glass":
+                                if(currentNumberOfItems != 4) {
+                                    int itemIndex = checkIfItemExists(gs.getObj()[i].getName());
+                                    if(itemIndex == -1) {
+                                        int index = firstEmptyItem();
+                                        items[index] = (Item) gs.getObj()[i];
+                                        numberOfItems[index] = 1;
+                                    }
+                                    else {
+                                        numberOfItems[itemIndex]++;
+                                    }
+                                    GameScreen.getInstance().getObj(i).update();
+                                }
+                                break;
+                            case "Teleporter":
+                                gs.getObj()[i].update();
                                 break;
                         }
                     }
@@ -156,16 +263,64 @@ public class Player extends MovingEntity {
         }
     }
 
+    void chooseItem() {
+        if(keys.press5) {
+            onItem = 0;
+        } else if (keys.press6) {
+            onItem = 1;
+        } else if (keys.press7) {
+            onItem = 2;
+        } else if (keys.press8) {
+            onItem = 3;
+        }
+    }
+
+    void useItem() throws IOException {
+        if(keys.qPress) {
+            if (numberOfItems[onItem] != 0) {
+                numberOfItems[onItem]--;
+                switch (items[onItem].getName()) {
+                    case "Health_Potion":
+                        HP += 30;
+                        if (HP > maxHP) {
+                            HP = maxHP;
+                        }
+                        break;
+                    case "Mana_Potion":
+                        MP += 60;
+                        if (MP > maxMP) {
+                            MP = maxMP;
+                        }
+                        break;
+                    case "Stamina_Potion":
+                        ST += 200;
+                        if (ST > maxST) {
+                            ST = maxST;
+                        }
+                        break;
+                    case "Hour_Glass":
+                        GameScreen.getInstance().timeStop = true;
+                        break;
+                }
+                if(numberOfItems[onItem] == 0) {
+                    items[onItem] = null;
+                    currentNumberOfItems--;
+                }
+            }
+            keys.qPress = false;
+        }
+    }
+
     void castAbility() {
-        if(keys.pPress && !usingAbility) {
+        if(mouse.leftClick && !usingAbility && abilityUnlocked[onAbility]) {
             if (MP >= MPForAbility[onAbility]) {
                 castTime = 0;
                 abilityInUse = onAbility;
-                directionAtCast = directionNumber;
+                directionAtCast = mouse.checkDirection();
                 MP -= MPForAbility[onAbility];
 
                 usingAbility = true;
-                keys.pPress = false;
+                mouse.leftClick = false;
             }
         }
         if(usingAbility && castTime == timeForAbilityCast[abilityInUse]) {
@@ -201,13 +356,18 @@ public class Player extends MovingEntity {
         switch(initSpeed) {
             case 2:
                 speed = 3;
-                speedProportion = 1.5;
                 break;
             case 3:
                 speed = 4;
-                speedProportion = 1.33;
                 break;
+            case 4:
+                speed = 5;
+                break;
+            case 10:
+                speed = 15;
         }
+        speedProportion = (float) speed / initSpeed;
+
 
         ST_CounterDec++;
         if(ST_CounterDec >= 3) {
@@ -219,7 +379,7 @@ public class Player extends MovingEntity {
     void Walk(int limit) {
         speed = initSpeed;
         speedProportion = 1;
-        if(ST < 100) {
+        if(ST < maxST) {
             ST_CounterInc++;
             if (ST_CounterInc >= limit) {
                 ST_CounterInc = 0;
@@ -244,7 +404,7 @@ public class Player extends MovingEntity {
         collisionOn1 = false;
         collisionOn2 = false;
         gs.getcChecker().CheckTile(this);
-        gs.getcChecker().CheckObject(this);
+        //gs.getcChecker().CheckObject(this);
         gs.getcChecker().CheckNPC(this);
         if(!collisionOn1) {
             switch (direction) {
@@ -371,13 +531,19 @@ public class Player extends MovingEntity {
         return image;
     }
 
-    public void update() {
+    public void update() throws IOException {
         if(HP >= 1) {
             if (!standing) {
                 collisionChecker();
             }
+            if(keys.pPress) {
+                System.out.println(worldX / gs.tileSize + " " + worldY / gs.tileSize);
+                keys.pPress = false;
+            }
             chooseAbility();
+            chooseItem();
             castAbility();
+            useItem();
             objectChecker();
             npcChecker();
             directionSetter();

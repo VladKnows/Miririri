@@ -1,5 +1,7 @@
 package Main;
 
+import Util.ImageVector;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -8,30 +10,36 @@ import java.util.Objects;
 
 public class UI {
     GameScreen gs;
-    Font font;
+    Font font, font1;
     BufferedImage ST_Bar, ST_One, HP_Bar, HP_One, MP_Bar, MP_One;
-    BufferedImage itemFrame1, itemFrame2,itemFrame3,itemFrame4,itemFrame5,itemFrame6,itemFrame7,itemFrame8;
+    BufferedImage []itemFrame = new BufferedImage[8];
+    BufferedImage []ability = new BufferedImage[4];
+    ImageVector selected;
 
-    boolean messageCheck = false;
+    static boolean messageCheck = false;
     boolean dialogueCheck = false;
 
-    int messageTimer, dialogueTimer;
+    static int messageTimer, dialogueTimer;
     int objectNumber, npcNumber;
     int dialogueX, dialogueY;
-    String message;
+    static String message;
+
+    final int[] HotBarAbilities = new int[] { 20, 130, 240, 350 };
+    final int[] HotBarItems = new int[] { 440, 330, 220, 110 };
 
 
     public UI(GameScreen gs) throws IOException {
         this.gs = gs;
         font = new Font("Open Sans", Font.BOLD, 30);
-        itemFrame1 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/Item_Frame1.png")));
-        itemFrame2 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/Item_Frame2.png")));
-        itemFrame3 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/Item_Frame3.png")));
-        itemFrame4 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/Item_Frame4.png")));
-        itemFrame5 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/Item_Frame5.png")));
-        itemFrame6 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/Item_Frame6.png")));
-        itemFrame7 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/Item_Frame7.png")));
-        itemFrame8 = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/Item_Frame8.png")));
+        font1 = new Font("Open Sans", Font.BOLD, 13);
+        for (int i = 0 ; i < 8; i++) {
+            itemFrame[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/Item_Frame" + (i + 1) + ".png")));
+        }
+        for (int i = 0 ; i < 4; i++) {
+            ability[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/Player_Ability_" + i + ".png")));
+        }
+        selected = new ImageVector("/res/UI", "Selected", 60, 13, new int[] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 });
+
         ST_Bar = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/ST_Bar.png")));
         ST_One = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/ST_One.png")));
         HP_Bar = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/HP_Bar.png")));
@@ -48,13 +56,6 @@ public class UI {
         return dialogueCheck;
     }
 
-    public void pickedUp(int index) {
-        gs.getUi().messageCheck = true;
-        gs.getUi().objectNumber = index;
-        gs.getUi().message = gs.getObj()[index].getMessage();
-        gs.setObj(index, null);
-    }
-
     public void talkToNPC(int index) {
         gs.getUi().dialogueCheck = true;
         gs.getUi().npcNumber = index;
@@ -65,26 +66,43 @@ public class UI {
         g2.drawString("", 0, 0);
 
         g2.drawImage(HP_Bar, 20, 15,null);
-        g2.drawImage(HP_One, 22, 17, gs.player.HP, 12, null);
+        int HPWidth = (int) ((float) gs.player.HP / (float) gs.player.maxHP * 100);
+        g2.drawImage(HP_One, 22, 17, HPWidth, 12, null);
 
         g2.drawImage(ST_Bar, 150, 15,null);
-        g2.drawImage(ST_One, 152, 17, gs.player.ST, 12, null);
+        int STWidth = (int) ((float) gs.player.ST / (float) gs.player.maxST * 100);
+        g2.drawImage(ST_One, 152, 17, STWidth, 12, null);
 
         g2.drawImage(MP_Bar, 280, 15, null);
-        g2.drawImage(MP_One, 282, 17, gs.player.MP, 12, null);
+        int MPWidth = (int) ((float) gs.player.MP / (float) gs.player.maxMP * 100);
+        g2.drawImage(MP_One, 282, 17, MPWidth, 12, null);
 
-        g2.drawImage(itemFrame1, 20, gs.getHeight() - 70, 60, 60, null);
-        g2.drawImage(itemFrame2, 100, gs.getHeight() - 70, 60, 60, null);
-        g2.drawImage(itemFrame3, 180, gs.getHeight() - 70, 60, 60, null);
-        g2.drawImage(itemFrame4, 260, gs.getHeight() - 70, 60, 60, null);
+        int yOnScreen = gs.getHeight() - 100;
 
-        g2.drawImage(itemFrame8, gs.getWidth() - 80, gs.getHeight() - 70, 60, 60, null);
-        g2.drawImage(itemFrame7, gs.getWidth() - 160, gs.getHeight() - 70, 60, 60, null);
-        g2.drawImage(itemFrame6, gs.getWidth() - 240, gs.getHeight() - 70, 60, 60, null);
-        g2.drawImage(itemFrame5, gs.getWidth() - 320, gs.getHeight() - 70, 60, 60, null);
+        for(int i = 0; i < 4; i++) {
+            g2.drawImage(itemFrame[i], HotBarAbilities[i], yOnScreen, 90, 90, null);
+            if(gs.player.abilityUnlocked[i])
+                g2.drawImage(ability[i], HotBarAbilities[i], yOnScreen, 90, 90, null);
+        }
+
+        for(int i = 0; i < 4; i++) {
+            g2.drawImage(itemFrame[i + 4], gs.getWidth() - HotBarItems[i], yOnScreen, 90, 90, null);
+            if(gs.player.items[i] != null) {
+                g2.drawImage(gs.player.items[i].getImage(), gs.getWidth() - HotBarItems[i], yOnScreen, 90, 90, null);
+                if(gs.player.numberOfItems[i] != 1) {
+                    g2.setFont(font1);
+                    g2.drawString("x" + gs.player.numberOfItems[i], gs.getWidth() - HotBarItems[i] + 67, yOnScreen + 81);
+                }
+            }
+        }
+
+        g2.drawImage(selected.GetImage(), HotBarAbilities[gs.player.onAbility], yOnScreen, 90, 90, null);
+        g2.drawImage(selected.GetImage(), gs.getWidth() - HotBarItems[gs.player.onItem], yOnScreen, 90, 90, null);
+
+        g2.setFont(font);
 
         if(messageCheck) {
-            g2.drawString(message, 20, 300);
+            g2.drawString(message, 20, 70);
             messageTimer++;
             if(messageTimer == 320) {
                 messageCheck = false;
@@ -93,18 +111,22 @@ public class UI {
         }
 
         if(dialogueCheck) {
-            g2.drawString(gs.npc[npcNumber].dialogue[gs.npc[npcNumber].onLine], dialogueX, dialogueY);
+            g2.drawString(gs.npc[gs.onMap][npcNumber].dialogue[gs.npc[gs.onMap][npcNumber].onLine], dialogueX, dialogueY);
             dialogueTimer++;
-            if(dialogueTimer >= gs.npc[npcNumber].dialogueDuration[gs.npc[npcNumber].onLine]) {
-                if(gs.npc[npcNumber].toLine - 1 > gs.npc[npcNumber].onLine)
-                    gs.npc[npcNumber].onLine++;
+            if(dialogueTimer >= gs.npc[gs.onMap][npcNumber].dialogueDuration[gs.npc[gs.onMap][npcNumber].onLine]) {
+                if(gs.npc[gs.onMap][npcNumber].toLine - 1 > gs.npc[gs.onMap][npcNumber].onLine)
+                    gs.npc[gs.onMap][npcNumber].onLine++;
                 else
                     dialogueCheck = false;
                 dialogueTimer = 0;
             }
-
         }
+    }
 
+    public static void loadMessage(String message) {
+        UI.message = message;
+        UI.messageCheck = true;
+        UI.messageTimer = 0;
     }
 
 }

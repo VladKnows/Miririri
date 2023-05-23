@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.Vector;
 
 public class GameScreen extends JPanel implements Runnable {
+    static GameScreen instance = null;
+
     //Tiles
     public static final int scale = 3;
     final static int originalTileSize = 32;
@@ -30,55 +32,70 @@ public class GameScreen extends JPanel implements Runnable {
     public final int screenHeightHalf = screenHeight / 2;
 
     //Others
+    public int onMap = 0;
     int FPS = 60;
     Thread gameThread;
     Map []maps = new Map[3];
     Keys keys = new Keys();
-    TileManager tileM;
+    Mouse mouse = new Mouse(this);
+    TileManager []tileM = new TileManager[3];
     UI ui = new UI(this);
     CollisionCheck cChecker = new CollisionCheck(this);
     Placement place = new Placement(this);
 
     //Entities & Objects
-    NPC []npc = new NPC[8];
-    Player player = new Player(this, keys);
-    SuperObject []obj = new SuperObject[10];
-    public Enemies []enemies = new Enemies[10];
+    NPC [][]npc = new NPC[3][8];
+    Player player = Player.getInstance(this, keys, mouse);
+    SuperObject [][]obj = new SuperObject[3][20];
+    public Enemies [][]enemies = new Enemies[3][20];
 
     //Abilities
     public Vector<Ability> enemyAbilities = new Vector<>(30);
     public Vector<Ability> playerAbilities = new Vector<>(30);
 
-    //Constructor
-    public GameScreen() throws IOException {
-        maps[0] = new Map("Map0.txt", 80, 50);
-        //maps[1] = new Map("Map1.txt", 100, 100);
-        //maps[2] = new Map("Map2.txt", 80, 50);
-        tileM = new TileManager(this, 0);
+    //Misc
+    public static boolean timeStop = false;
+    public static int timeStopTimer = 0;
 
+    //Constructor
+    GameScreen() throws IOException {
+        maps[0] = new Map("Map0.txt", 80, 50);
+        maps[1] = new Map("Map1.txt", 40, 57);
+        maps[2] = new Map("Map2.txt", 40, 70);
+        tileM[0] = new TileManager(this, 0);
+        tileM[1] = new TileManager(this, 1);
+        tileM[2] = new TileManager(this, 2);
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         this.addKeyListener(keys);
+        this.addMouseListener(mouse);
         this.setFocusable(true);
         startThread();
+    }
+
+    public static GameScreen getInstance() throws IOException {
+        if(instance == null) {
+            instance = new GameScreen();
+        }
+        return  instance;
     }
 
     //Getters
     public Player getPlayer() { return player; }
     public Map[] getMaps() { return maps; }
-    public NPC[] getNpc() { return npc; }
+    public NPC[] getNpc() { return npc[onMap]; }
     public UI getUi() { return ui; }
     public CollisionCheck getcChecker() { return cChecker; }
-    public SuperObject[] getObj() { return obj; }
+    public SuperObject[] getObj() { return obj[onMap]; }
 
     public Map getMaps(int nr) { return maps[nr]; }
-    public NPC getNpc(int nr) { return npc[nr]; }
-    public SuperObject getObj(int nr) { return obj[nr]; }
+    public NPC getNpc(int nr) { return npc[onMap][nr]; }
+    public SuperObject getObj(int nr) { return obj[onMap][nr]; }
 
     //Setters
     public void setObj(int index, SuperObject obj) {
-        this.obj[index] = null;
+        this.obj[onMap][index] = null;
     }
 
     //Thread
@@ -89,13 +106,12 @@ public class GameScreen extends JPanel implements Runnable {
 
     //Updates
     public void updateEnemies() {
-        for(int i = 0; i < enemies.length; i++) {
-            if(enemies[i] != null) {
-                enemies[i].update(player.getWorldX(), player.getWorldY());
+        for(int i = 0; i < enemies[onMap].length; i++) {
+            if(enemies[onMap][i] != null) {
+                enemies[onMap][i].update(player.getWorldX(), player.getWorldY());
             }
         }
         //CHANGED
-        //not with 0 index
         for(int i = 0; i < enemyAbilities.size(); i++) {
             if(enemyAbilities.elementAt(i) != null) {
                 enemyAbilities.elementAt(i).currentDuration++;
@@ -128,32 +144,38 @@ public class GameScreen extends JPanel implements Runnable {
             }
         }
     }
-    public void update() {
+    public void update() throws IOException {
         if(!this.getUi().isDialogueCheck()) {
             player.update();
             updateEnemies();
+            if(timeStop) {
+                if(timeStopTimer >= 300)
+                    timeStop = false;
+                timeStopTimer++;
+            }
         }
     }
 
     //Display On Screen
     void drawObjects(Graphics2D g2) {
-        for(int i = 0; i < obj.length; i++) {
-            if (obj[i] != null) { obj[i].draw(this, g2); }
+        for(int i = 0; i < obj[onMap].length; i++) {
+            if (obj[onMap][i] != null) {
+                obj[onMap][i].draw(this, g2);
+            }
         }
     }
 
     void drawNpcs(Graphics2D g2) {
-        for(int i = 0; i < npc.length; i++) {
-            if(npc[i] != null) { npc[i].draw(this, g2); }
+        for(int i = 0; i < npc[onMap].length; i++) {
+            if(npc[onMap][i] != null) { npc[onMap][i].draw(this, g2); }
         }
     }
 
     //to change to Enemies and another one for abilities
     void drawEnemiesAndAbilities(Graphics2D g2) {
-        for(int i = 0; i < enemies.length; i++) {
-            if(enemies[i] != null) {
-                enemies[i].draw(this, g2);
-//                if(enemies[i].isAbilityOn()) { enemies[i].getAbilities()[enemies[i].getOnAbility()].draw(this, g2); }
+        for(int i = 0; i < enemies[onMap].length; i++) {
+            if(enemies[onMap][i] != null) {
+                enemies[onMap][i].draw(this, g2);
             }
         }
         for(int i = 0; i < enemyAbilities.size(); i++) {
@@ -175,7 +197,7 @@ public class GameScreen extends JPanel implements Runnable {
         Graphics2D g2 = back.createGraphics();
 
         //Draws
-        tileM.draw(g2);                 //Tiles
+        tileM[onMap].draw(g2);          //Tiles
         drawObjects(g2);                //Objects
         drawNpcs(g2);                   //NPCs
         drawEnemiesAndAbilities(g2);    //Enemies & their Abilities
@@ -203,7 +225,11 @@ public class GameScreen extends JPanel implements Runnable {
         long interval = 1000/FPS;
         long start = System.currentTimeMillis();
         while(gameThread != null) {
-            update();
+            try {
+                update();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             repaint();
 
             try {

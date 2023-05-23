@@ -51,9 +51,8 @@ abstract public class Projectile {
             case "Ultra_Sound":
                 image = new ImageVector("/Abilities", name, 288, numberOfImages, durationsOfImages);
                 break;
-            case "Player_Ability_3":
+            case "Player_Ability_3", "Tornado":
                 image = new ImageVector("/Abilities", name, 96, numberOfImages, durationsOfImages);
-
                 break;
             default:
                 image = new ImageVector("/Abilities", name, numberOfImages, durationsOfImages);

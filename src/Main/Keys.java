@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Keys implements KeyListener{
-    public boolean wPress, aPress, sPress, dPress, ePress, tPress, pPress, shPress = false, escPress = false, press1, press2, press3, press4;
+    public boolean wPress, aPress, sPress, dPress, ePress, tPress, pPress, qPress, shPress = false, escPress = false, press1, press2, press3, press4, press5, press6, press7, press8;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -21,6 +21,7 @@ public class Keys implements KeyListener{
         if (code == KeyEvent.VK_E) { ePress = true; }
         if (code == KeyEvent.VK_T) { tPress = true; }
         if (code == KeyEvent.VK_P) { pPress = true; }
+        if (code == KeyEvent.VK_Q) { qPress = true; }
         if (code == KeyEvent.VK_SHIFT) { shPress = true; }
         if (code == KeyEvent.VK_ESCAPE) { escPress = true; }
         if (code == KeyEvent.VK_L) { escPress = true; }
@@ -28,6 +29,10 @@ public class Keys implements KeyListener{
         if (code == KeyEvent.VK_2) { press2 = true; }
         if (code == KeyEvent.VK_3) { press3 = true; }
         if (code == KeyEvent.VK_4) { press4 = true; }
+        if (code == KeyEvent.VK_5) { press5 = true; }
+        if (code == KeyEvent.VK_6) { press6 = true; }
+        if (code == KeyEvent.VK_7) { press7 = true; }
+        if (code == KeyEvent.VK_8) { press8 = true; }
     }
 
     @Override
@@ -38,38 +43,15 @@ public class Keys implements KeyListener{
         if (code == KeyEvent.VK_S) { sPress = false; }
         if (code == KeyEvent.VK_D) { dPress = false; }
         if (code == KeyEvent.VK_P) { pPress = false; }
+        if (code == KeyEvent.VK_Q) { qPress = false; }
         if (code == KeyEvent.VK_SHIFT) { shPress = false; }
         if (code == KeyEvent.VK_1) { press1 = false; }
         if (code == KeyEvent.VK_2) { press2 = false; }
         if (code == KeyEvent.VK_3) { press3 = false; }
         if (code == KeyEvent.VK_4) { press4 = false; }
+        if (code == KeyEvent.VK_5) { press5 = false; }
+        if (code == KeyEvent.VK_6) { press6 = false; }
+        if (code == KeyEvent.VK_7) { press7 = false; }
+        if (code == KeyEvent.VK_8) { press8 = false; }
     }
 }
-
-//class Mouse implements MouseListener {
-//
-//    @Override
-//    public void mouseClicked(MouseEvent e) {
-//        if(e.)
-//    }
-//
-//    @Override
-//    public void mousePressed(MouseEvent e) {
-//
-//    }
-//
-//    @Override
-//    public void mouseReleased(MouseEvent e) {
-//
-//    }
-//
-//    @Override
-//    public void mouseEntered(MouseEvent e) {
-//
-//    }
-//
-//    @Override
-//    public void mouseExited(MouseEvent e) {
-//
-//    }
-//}
