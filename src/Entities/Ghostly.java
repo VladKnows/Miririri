@@ -31,7 +31,7 @@ public class Ghostly extends Enemies{
     @Override
     void loadAbilities() throws IOException {
         abilities = new Ability[1];
-        abilities[0] = new Ability(40, 24, false, false, new Projectile[]{new Projectile_Static(false, false, true, "Slash", 480, 480, 192, 192, new Rectangle(0, 192, 480, 192), 30, 8, new int[] {3, 3, 3, 3, 3, 3, 3, 3})});
+        abilities[0] = new Ability(60, 24, false, false, new Projectile[]{new Projectile_Static(false, false, true, "Slash", 480, 480, 192, 192, new Rectangle(0, 192, 480, 192), 30, 8, new int[] {3, 3, 3, 3, 3, 3, 3, 3})});
     }
 
     @Override

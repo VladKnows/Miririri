@@ -104,75 +104,41 @@ public class Placement {
     }
 
     public void placeEnemy() throws IOException {
-        if(gs.numberOfRemainingEnemies[0] >= 1)
             gs.enemies[0][0] = new Ghostly(gs, 11 * gs.tileSize,28 * gs.tileSize,100);
-        if(gs.numberOfRemainingEnemies[0] >= 2)
             gs.enemies[0][1] = new Ghostly(gs, 26 * gs.tileSize,35 * gs.tileSize,100);
-        if(gs.numberOfRemainingEnemies[0] >= 3)
             gs.enemies[0][2] = new Ghostly(gs, 19 * gs.tileSize,51 * gs.tileSize,150);
-        if(gs.numberOfRemainingEnemies[0] >= 4)
             gs.enemies[0][3] = new Ghostly(gs, 9 * gs.tileSize,63 * gs.tileSize,150);
-        if(gs.numberOfRemainingEnemies[0] >= 5)
             gs.enemies[0][4] = new Rock_Head(gs, 38 * gs.tileSize,62 * gs.tileSize,100);
-        if(gs.numberOfRemainingEnemies[0] >= 6)
             gs.enemies[0][5] = new Rock_Head(gs, 30 * gs.tileSize,72 * gs.tileSize,100);
-        if(gs.numberOfRemainingEnemies[0] >= 7)
             gs.enemies[0][6] = new Rock_Head(gs, 24 * gs.tileSize,63 * gs.tileSize,100);
-        if(gs.numberOfRemainingEnemies[0] >= 8)
             gs.enemies[0][7] = new Rock_Head(gs, 17 * gs.tileSize,73 * gs.tileSize,150);
 
-        if(gs.numberOfRemainingEnemies[1] >= 1)
             gs.enemies[1][0] = new Ghostly(gs, 18 * gs.tileSize,7 * gs.tileSize,150);
-        if(gs.numberOfRemainingEnemies[1] >= 2)
             gs.enemies[1][1] = new Ghostly(gs, 44 * gs.tileSize,11 * gs.tileSize,150);
-        if(gs.numberOfRemainingEnemies[1] >= 3)
             gs.enemies[1][2] = new Rock_Head(gs, 47 * gs.tileSize,29 * gs.tileSize,200);
-        if(gs.numberOfRemainingEnemies[1] >= 4)
             gs.enemies[1][3] = new Rock_Head(gs, 13 * gs.tileSize,29 * gs.tileSize,200);
-        if(gs.numberOfRemainingEnemies[1] >= 5)
             gs.enemies[1][4] = new Rock_Head(gs, 30 * gs.tileSize,7 * gs.tileSize,150);
-        if(gs.numberOfRemainingEnemies[1] >= 6)
             gs.enemies[1][5] = new Rock_Head(gs, 44 * gs.tileSize,6 * gs.tileSize,150);
-        if(gs.numberOfRemainingEnemies[1] >= 7)
             gs.enemies[1][6] = new Rock_Head(gs, 46 * gs.tileSize,20 * gs.tileSize,150);
-        if(gs.numberOfRemainingEnemies[1] >= 8)
             gs.enemies[1][7] = new Bat(gs, 28 * gs.tileSize,25 * gs.tileSize,150);
-        if(gs.numberOfRemainingEnemies[1] >= 9)
             gs.enemies[1][8] = new Bat(gs, 11 * gs.tileSize,16 * gs.tileSize,200);
-        if(gs.numberOfRemainingEnemies[1] >= 10)
             gs.enemies[1][9] = new Bat(gs, 23 * gs.tileSize,17 * gs.tileSize,200);
 
-        if(gs.numberOfRemainingEnemies[2] >= 1)
             gs.enemies[2][0] = new Ghostly(gs, 43 * gs.tileSize,7 * gs.tileSize,150);
-        if(gs.numberOfRemainingEnemies[2] >= 2)
             gs.enemies[2][1] = new Ghostly(gs, 31 * gs.tileSize,5 * gs.tileSize,200);
-        if(gs.numberOfRemainingEnemies[2] >= 3)
             gs.enemies[2][2] = new Ghostly(gs, 50 * gs.tileSize,13 * gs.tileSize,200);
-        if(gs.numberOfRemainingEnemies[2] >= 4)
             gs.enemies[2][3] = new Rock_Head(gs, 28 * gs.tileSize,28 * gs.tileSize,200);
-        if(gs.numberOfRemainingEnemies[2] >= 5)
             gs.enemies[2][4] = new Rock_Head(gs, 43 * gs.tileSize,26 * gs.tileSize,200);
-        if(gs.numberOfRemainingEnemies[2] >= 6)
             gs.enemies[2][5] = new Rock_Head(gs, 59 * gs.tileSize,30 * gs.tileSize,200);
-        if(gs.numberOfRemainingEnemies[2] >= 7)
             gs.enemies[2][6] = new Rock_Head(gs, 52 * gs.tileSize,5 * gs.tileSize,150);
-        if(gs.numberOfRemainingEnemies[2] >= 8)
             gs.enemies[2][7] = new Rock_Head(gs, 31 * gs.tileSize,10 * gs.tileSize,150);
-        if(gs.numberOfRemainingEnemies[2] >= 9)
             gs.enemies[2][8] = new Rock_Head(gs, 7 * gs.tileSize,7 * gs.tileSize,200);
-        if(gs.numberOfRemainingEnemies[2] >= 10)
             gs.enemies[2][9] = new Bat(gs, 9 * gs.tileSize,15 * gs.tileSize,200);
-        if(gs.numberOfRemainingEnemies[2] >= 11)
             gs.enemies[2][10] = new Bat(gs, 34 * gs.tileSize,14 * gs.tileSize,250);
-        if(gs.numberOfRemainingEnemies[2] >= 12)
             gs.enemies[2][11] = new Bat(gs, 13 * gs.tileSize,21 * gs.tileSize,250);
-        if(gs.numberOfRemainingEnemies[2] >= 13)
             gs.enemies[2][12] = new Bat(gs, 10 * gs.tileSize,30 * gs.tileSize,300);
-        if(gs.numberOfRemainingEnemies[2] >= 14)
             gs.enemies[2][13] = new Bat(gs, 31 * gs.tileSize,24 * gs.tileSize,300);
-        if(gs.numberOfRemainingEnemies[2] >= 15)
             gs.enemies[2][14] = new Bat(gs, 58 * gs.tileSize,23 * gs.tileSize,300);
-        if(gs.numberOfRemainingEnemies[2] >= 16)
             gs.enemies[2][15] = new Bat(gs, 57 * gs.tileSize,27 * gs.tileSize,300);
     }
 }
