@@ -26,11 +26,11 @@ public class Projectile_Static extends Projectile{
     }
 
     @Override
-    public void update(GameScreen gs, int entityX, int entityY) {
+    public void update(GameScreen gs, int entityX, int entityY) throws IOException {
         if(!friendly) {
             gs.getcChecker().CheckHit(gs.getPlayer(), this);
         } else {
-            for(int i = 0; i < gs.enemies.length; i++) {
+            for(int i = 0; i < gs.enemies[gs.onMap].length; i++) {
                 if(gs.enemies[gs.onMap][i] != null && gs.enemies[gs.onMap][i].HP != 0)
                     gs.getcChecker().CheckHit(gs.enemies[gs.onMap][i], this);
             }

@@ -78,7 +78,7 @@ public class Player extends MovingEntity {
         maxMP = MP;
         maxST = ST;
 
-        initSpeed = 10;
+        initSpeed = 4;
         speed = 2;
         speedProportion = 1;
 
@@ -164,11 +164,10 @@ public class Player extends MovingEntity {
             for (int i = 0; i < gs.getObj().length; i++) {
                 if (gs.getObj(i) != null) {
                     if (gs.getObj(i).getWorldX() / gs.tileSize == rowPlayer && gs.getObj(i).getWorldY() / gs.tileSize == colPlayer) {
-                        SuperObject.markedForDeletion = i;
+                        boolean doUpdate = true;
                         switch (gs.getObj(i).getName()) {
                             case "Boots":
                                 initSpeed += 1;
-                                GameScreen.getInstance().getObj(i).update();
                                 break;
                             case "Sword":
                                 for(int j = 0; j < 4; j++) {
@@ -189,27 +188,28 @@ public class Player extends MovingEntity {
                                         }
                                     }
                                 }
-                                GameScreen.getInstance().getObj(i).update();
                                 break;
-                            case "Gem":
+                            case "Mana_Gem":
                                 maxMP += 40;
-                                GameScreen.getInstance().getObj(i).update();
+                                MP += 40;
                                 break;
+                            case "Health_Gem":
+                                maxHP += 25;
+                                HP += 25;
+                            case "Stamina_Gem":
+                                maxST += 25;
+                                ST += 25;
                             case "Scroll_Ability_0":
                                 abilityUnlocked[0] = true;
-                                GameScreen.getInstance().getObj(i).update();
                                 break;
                             case "Scroll_Ability_1":
                                 abilityUnlocked[1] = true;
-                                GameScreen.getInstance().getObj(i).update();
                                 break;
                             case "Scroll_Ability_2":
                                 abilityUnlocked[2] = true;
-                                GameScreen.getInstance().getObj(i).update();
                                 break;
                             case "Scroll_Ability_3":
                                 abilityUnlocked[3] = true;
-                                GameScreen.getInstance().getObj(i).update();
                                 break;
                             case "Health_Potion", "Mana_Potion", "Stamina_Potion", "Hour_Glass":
                                 if(currentNumberOfItems != 4) {
@@ -222,12 +222,17 @@ public class Player extends MovingEntity {
                                     else {
                                         numberOfItems[itemIndex]++;
                                     }
-                                    GameScreen.getInstance().getObj(i).update();
-                                }
+                                } else
+                                    doUpdate = false;
                                 break;
                             case "Teleporter":
-                                gs.getObj()[i].update();
                                 break;
+                            default:
+                                doUpdate = false;
+                        }
+                        if(doUpdate) {
+                            SuperObject.markedForDeletion = i;
+                            GameScreen.getInstance().getObj(i).update();
                         }
                     }
                 }
@@ -287,16 +292,13 @@ public class Player extends MovingEntity {
                         }
                         break;
                     case "Mana_Potion":
-                        MP += 60;
+                        MP += 100;
                         if (MP > maxMP) {
                             MP = maxMP;
                         }
                         break;
                     case "Stamina_Potion":
-                        ST += 200;
-                        if (ST > maxST) {
-                            ST = maxST;
-                        }
+                        ST = maxST;
                         break;
                     case "Hour_Glass":
                         GameScreen.getInstance().timeStop = true;
@@ -353,19 +355,7 @@ public class Player extends MovingEntity {
     }
 
     void Run() {
-        switch(initSpeed) {
-            case 2:
-                speed = 3;
-                break;
-            case 3:
-                speed = 4;
-                break;
-            case 4:
-                speed = 5;
-                break;
-            case 10:
-                speed = 15;
-        }
+        speed = initSpeed + 1;
         speedProportion = (float) speed / initSpeed;
 
 
@@ -404,7 +394,6 @@ public class Player extends MovingEntity {
         collisionOn1 = false;
         collisionOn2 = false;
         gs.getcChecker().CheckTile(this);
-        //gs.getcChecker().CheckObject(this);
         gs.getcChecker().CheckNPC(this);
         if(!collisionOn1) {
             switch (direction) {
@@ -537,7 +526,9 @@ public class Player extends MovingEntity {
                 collisionChecker();
             }
             if(keys.pPress) {
-                System.out.println(worldX / gs.tileSize + " " + worldY / gs.tileSize);
+                initSpeed = 20;
+                abilities[0].projectiles[0].damage = 1000;
+                abilityUnlocked[0] = true;
                 keys.pPress = false;
             }
             chooseAbility();
@@ -548,6 +539,10 @@ public class Player extends MovingEntity {
             npcChecker();
             directionSetter();
             speedSetter();
+            if(keys.escPress) {
+                GameScreen.setCurrentState(2);
+                keys.escPress = false;
+            }
         }
     }
 

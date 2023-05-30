@@ -4,6 +4,7 @@ import Abilities.Ability;
 import Entities.Enemies;
 import Entities.NPC;
 import Entities.Player;
+import Objects.Item;
 import Objects.SuperObject;
 import Tiles.Map;
 import Tiles.TileManager;
@@ -14,8 +15,22 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Vector;
 
+import static Main.DataBase.getB;
+
 public class GameScreen extends JPanel implements Runnable {
+    public static int scoreSet = 3;
     static GameScreen instance = null;
+    static int scor = 0;
+    static int []scores = {0, 0, 0};
+
+    //States
+    static private int currentState = 0;
+    public final static int MENU = 0;
+    public final static int INGAME = 1;
+    public final static int PAUSED = 2;
+    public final static int VICTORY = 3;
+    public final static int SCORES = 4;
+
 
     //Tiles
     public static final int scale = 3;
@@ -37,7 +52,7 @@ public class GameScreen extends JPanel implements Runnable {
     Thread gameThread;
     Map []maps = new Map[3];
     Keys keys = new Keys();
-    Mouse mouse = new Mouse(this);
+    public Mouse mouse = new Mouse(this);
     TileManager []tileM = new TileManager[3];
     UI ui = new UI(this);
     CollisionCheck cChecker = new CollisionCheck(this);
@@ -48,17 +63,23 @@ public class GameScreen extends JPanel implements Runnable {
     Player player = Player.getInstance(this, keys, mouse);
     SuperObject [][]obj = new SuperObject[3][20];
     public Enemies [][]enemies = new Enemies[3][20];
+    public int []numberOfRemainingEnemies = new int[3];
 
     //Abilities
     public Vector<Ability> enemyAbilities = new Vector<>(30);
     public Vector<Ability> playerAbilities = new Vector<>(30);
 
     //Misc
+    public static boolean []levelUnlocked = new boolean[] {true, false, false};
     public static boolean timeStop = false;
     public static int timeStopTimer = 0;
 
     //Constructor
     GameScreen() throws IOException {
+        scores[0] = (int) getB("DataBase", "TableForGame", "int", "scores0");
+        scores[1] = (int) getB("DataBase", "TableForGame", "int", "scores1");
+        scores[2] = (int) getB("DataBase", "TableForGame", "int", "scores2");
+
         maps[0] = new Map("Map0.txt", 80, 50);
         maps[1] = new Map("Map1.txt", 40, 57);
         maps[2] = new Map("Map2.txt", 40, 70);
@@ -70,6 +91,7 @@ public class GameScreen extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keys);
         this.addMouseListener(mouse);
+        this.addMouseMotionListener(mouse);
         this.setFocusable(true);
         startThread();
     }
@@ -105,7 +127,7 @@ public class GameScreen extends JPanel implements Runnable {
     }
 
     //Updates
-    public void updateEnemies() {
+    public void updateEnemies() throws IOException {
         for(int i = 0; i < enemies[onMap].length; i++) {
             if(enemies[onMap][i] != null) {
                 enemies[onMap][i].update(player.getWorldX(), player.getWorldY());
@@ -145,13 +167,22 @@ public class GameScreen extends JPanel implements Runnable {
         }
     }
     public void update() throws IOException {
-        if(!this.getUi().isDialogueCheck()) {
-            player.update();
-            updateEnemies();
-            if(timeStop) {
-                if(timeStopTimer >= 300)
-                    timeStop = false;
-                timeStopTimer++;
+        if(currentState == 1) {
+            if (!this.getUi().isDialogueCheck()) {
+                player.update();
+                updateEnemies();
+                countEnemies();
+                for(int i = 0; i < 2; i++) {
+                    if(!levelUnlocked[i + 1])
+                        if(numberOfRemainingEnemies[i] == 0)
+                            levelUnlocked[i + 1] = true;
+
+                }
+                if (timeStop) {
+                    if (timeStopTimer >= 300)
+                        timeStop = false;
+                    timeStopTimer++;
+                }
             }
         }
     }
@@ -197,18 +228,45 @@ public class GameScreen extends JPanel implements Runnable {
         Graphics2D g2 = back.createGraphics();
 
         //Draws
-        tileM[onMap].draw(g2);          //Tiles
-        drawObjects(g2);                //Objects
-        drawNpcs(g2);                   //NPCs
-        drawEnemiesAndAbilities(g2);    //Enemies & their Abilities
-        player.draw(g2);                //Player
-        ui.draw(g2);                    //UI
+        switch (currentState) {
+            case 0, 2, 3, 4:
+                try {
+                    ui.draw(g2);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case 1:
+                tileM[onMap].draw(g2);          //Tiles
+                drawObjects(g2);                //Objects
+                drawNpcs(g2);                   //NPCs
+                drawEnemiesAndAbilities(g2);    //Enemies & their Abilities
+                player.draw(g2);                //Player
+                try {
+                    ui.draw(g2);                    //UI
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+        }
 
         //Double Buffer
         g2.dispose();
         Graphics2D g2Front = (Graphics2D) g;
         g2Front.drawImage(back, 0, 0, null);
         g2Front.dispose();
+    }
+
+    void countEnemies() {
+        for(int i = 0; i < 3; i++) {
+            numberOfRemainingEnemies[i] = 0;
+            for (int j = 0; j < enemies[i].length; j++)
+                if (enemies[i][j] != null)
+                    if(enemies[i][j].HP > 0)
+                        numberOfRemainingEnemies[i]++;
+        }
+                if(numberOfRemainingEnemies[2] == 0)
+                    currentState = 3;
     }
 
     //Main Loop
@@ -218,6 +276,7 @@ public class GameScreen extends JPanel implements Runnable {
             place.placeObject();
             place.placeNPC();
             place.placeEnemy();
+            countEnemies();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -244,5 +303,77 @@ public class GameScreen extends JPanel implements Runnable {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public void loadAllVariables(String n, String t) {
+        if((int)getB(n, t, "int", "playerX") != 0) {
+            onMap = (int) getB(n, t, "int", "onMap");
+            player.setWorldX((int) getB(n, t, "int", "playerX"));
+            player.setWorldY((int) getB(n, t, "int", "playerY"));
+            player.initSpeed = (int) getB(n, t, "int", "playerSpeed");
+            scor = (int) getB(n, t, "int", "scor");
+            scores[0] = (int) getB(n, t, "int", "scores0");
+            scores[1] = (int) getB(n, t, "int", "scores1");
+            scores[2] = (int) getB(n, t, "int", "scores2");
+            player.maxHP = (int) getB(n, t, "int", "HP");
+            player.maxST = (int) getB(n, t, "int", "ST");
+            player.maxMP = (int) getB(n, t, "int", "MP");
+            if ((int) getB(n, t, "int", "ability0") != 0)
+                player.abilityUnlocked[0] = true;
+            if ((int) getB(n, t, "int", "ability1") != 0)
+                player.abilityUnlocked[1] = true;
+            if ((int) getB(n, t, "int", "ability2") != 0)
+                player.abilityUnlocked[2] = true;
+            if ((int) getB(n, t, "int", "ability3") != 0)
+                player.abilityUnlocked[3] = true;
+            numberOfRemainingEnemies[0] = (int) getB(n, t, "int", "numberOfEnemiesLeft0");
+            numberOfRemainingEnemies[1] = (int) getB(n, t, "int", "numberOfEnemiesLeft1");
+            numberOfRemainingEnemies[2] = (int) getB(n, t, "int", "numberOfEnemiesLeft2");
+            String s;
+            int index;
+
+//        if(getB(n, t, "String", "itemName0") != null) {
+//            s = (String) getB(n, t, "String", "itemName0");
+//            index = 0;
+//            addItemFromString(index, s);
+//        }
+//        s = (String) getB(n, t, "String", "itemName1");
+//        index = 1;
+//        addItemFromString(index, s);
+//        s = (String) getB(n, t, "String", "itemName2");
+//        index = 2;
+//        addItemFromString(index, s);
+//        s = (String) getB(n, t, "String", "itemName3");
+//        index = 3;
+//        addItemFromString(index, s);
+            player.numberOfItems[0] = (int) getB(n, t, "int", "itemAmount0");
+            player.numberOfItems[1] = (int) getB(n, t, "int", "itemAmount1");
+            player.numberOfItems[2] = (int) getB(n, t, "int", "itemAmount2");
+            player.numberOfItems[3] = (int) getB(n, t, "int", "itemAmount3");
+        }
+    }
+
+    private void addItemFromString(int index, String s) {
+        Item i = null;
+        if(s != null) {
+            if(s == "Health_Potion" || s == "Mana_Potion" || s ==  "Stamina_Potion" || s ==  "Hour_Glass") {
+                for(int j = 0; j < obj[0].length; j++) {
+                    if(obj[0][j] != null) {
+                        if(obj[0][j].getName() == s) {
+                            player.items[index] = (Item) obj[0][j];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    static public void setCurrentState(int i) {
+        currentState = i;
+    }
+
+    static public int getCurrentState() {
+        return currentState;
     }
 }

@@ -5,6 +5,7 @@ import Entities.MovingEntity;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
 import java.util.Objects;
 
 public class CollisionCheck {
@@ -14,7 +15,7 @@ public class CollisionCheck {
         this.gs = gs;
     }
 
-    public void CheckHit(MovingEntity entity, Projectile projectile) {
+    public void CheckHit(MovingEntity entity, Projectile projectile) throws IOException {
         Rectangle p = new Rectangle(entity.getWorldX() + entity.getSolid().x, entity.getWorldY() + entity.getSolid().y, entity.getSolid().width, entity.getSolid().height);
         AffineTransform a0 = AffineTransform.getTranslateInstance(projectile.x, projectile.y);
         Shape a = a0.createTransformedShape(projectile.solid);
@@ -33,7 +34,8 @@ public class CollisionCheck {
             projectile.itHitOne = true;
         }
 
-        if(entity.HP < 0) {
+        if(entity.HP <= 0) {
+            GameScreen.scor += 20;
             entity.HP = 0;
         }
     }

@@ -21,6 +21,5 @@ public class PowerUp extends SuperObject {
     public void update() throws IOException {
         super.update();
         GameScreen.getInstance().setObj(markedForDeletion, null);
-
     }
 }

@@ -2,9 +2,10 @@ package Main;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.nio.channels.ClosedSelectorException;
 
-public class Mouse implements MouseListener {
+public class Mouse implements MouseListener, MouseMotionListener {
     GameScreen gs;
     public int x, y;
     public boolean leftClick = false;
@@ -16,11 +17,6 @@ public class Mouse implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
         x = e.getX();
         y = e.getY();
         int button = e.getButton();
@@ -30,6 +26,12 @@ public class Mouse implements MouseListener {
         if(button == MouseEvent.BUTTON2) {
             rightClick = true;
         }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        x = e.getX();
+        y = e.getY();
     }
 
     @Override
@@ -46,6 +48,18 @@ public class Mouse implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        x = e.getX();
+        y = e.getY();
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        x = e.getX();
+        y = e.getY();
     }
 
     public int checkDirection() {

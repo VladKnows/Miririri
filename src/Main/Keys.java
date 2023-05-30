@@ -24,7 +24,6 @@ public class Keys implements KeyListener{
         if (code == KeyEvent.VK_Q) { qPress = true; }
         if (code == KeyEvent.VK_SHIFT) { shPress = true; }
         if (code == KeyEvent.VK_ESCAPE) { escPress = true; }
-        if (code == KeyEvent.VK_L) { escPress = true; }
         if (code == KeyEvent.VK_1) { press1 = true; }
         if (code == KeyEvent.VK_2) { press2 = true; }
         if (code == KeyEvent.VK_3) { press3 = true; }

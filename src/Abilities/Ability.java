@@ -3,6 +3,7 @@ package Abilities;
 import Main.GameScreen;
 
 import java.awt.*;
+import java.io.IOException;
 
 public class Ability {
     public int range;
@@ -30,7 +31,7 @@ public class Ability {
         }
     }
 
-    public void update(GameScreen gs, int entityX, int entityY) {
+    public void update(GameScreen gs, int entityX, int entityY) throws IOException {
         for(int i = 0; i < projectiles.length; i++) {
             projectiles[i].update(gs, entityX, entityY);
         }

@@ -74,7 +74,7 @@ public class Projectile_Moving extends Projectile {
     }
 
     @Override
-    public void update(GameScreen gs, int entityX, int entityY) {
+    public void update(GameScreen gs, int entityX, int entityY) throws IOException {
         setCoord(entityX, entityY);
         setTo(gs.getPlayer().getWorldX() - deviationX, gs.getPlayer().getWorldY() - deviationY);
         followEntity();
@@ -86,7 +86,7 @@ public class Projectile_Moving extends Projectile {
             }
         }
         else {
-            for(int i = 0; i < gs.enemies.length; i++) {
+            for(int i = 0; i < gs.enemies[gs.onMap].length; i++) {
                 if(gs.enemies[gs.onMap][i] != null && gs.enemies[gs.onMap][i].HP != 0)
                     gs.getcChecker().CheckHit(gs.enemies[gs.onMap][i], this);
             }

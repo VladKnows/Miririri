@@ -3,24 +3,30 @@ package Main;
 import Util.ImageVector;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
+import static Main.DataBase.insertB;
+
 public class UI {
     GameScreen gs;
-    Font font, font1;
+    Font font, font1, font2;
     BufferedImage ST_Bar, ST_One, HP_Bar, HP_One, MP_Bar, MP_One;
     BufferedImage []itemFrame = new BufferedImage[8];
     BufferedImage []ability = new BufferedImage[4];
+    Buttons []buttons = new Buttons[8];
     ImageVector selected;
 
     static boolean messageCheck = false;
     boolean dialogueCheck = false;
 
     static int messageTimer, dialogueTimer;
-    int objectNumber, npcNumber;
+    int npcNumber;
     int dialogueX, dialogueY;
     static String message;
 
@@ -28,10 +34,12 @@ public class UI {
     final int[] HotBarItems = new int[] { 440, 330, 220, 110 };
 
 
+
     public UI(GameScreen gs) throws IOException {
         this.gs = gs;
         font = new Font("Open Sans", Font.BOLD, 30);
         font1 = new Font("Open Sans", Font.BOLD, 13);
+        font2 = new Font("Open Sans", Font.ITALIC, 100);
         for (int i = 0 ; i < 8; i++) {
             itemFrame[i] = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/Item_Frame" + (i + 1) + ".png")));
         }
@@ -47,6 +55,19 @@ public class UI {
         MP_Bar = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/MP_Bar.png")));
         MP_One = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/res/UI/MP_One.png")));
 
+        int x = 1536 / 2 - 48 * 3;
+        int y = 845 / 2 - 120 * 2;
+        buttons[0] = new Buttons("/res/UI/Play_Button", x, y, 288, 96);
+        buttons[4] = new Buttons("/res/UI/Back_Button", x, y, 288, 96);
+        y += 120;
+        buttons[5] = new Buttons("/res/UI/Save_Button", x, y, 288, 96);
+        buttons[1] = new Buttons("/res/UI/Load_Button", x, y, 288, 96);
+        y += 120;
+        buttons[6] = new Buttons("/res/UI/Menu_Button", x, y, 288, 96);
+        buttons[2] = new Buttons("/res/UI/Scores_Button", x, y, 288, 96);
+        y += 120;
+        buttons[3] = new Buttons("/res/UI/Quit_Button", x, y, 288, 96);
+
         dialogueX = gs.screenWidthHalf - 200;
         dialogueY = 30;
         dialogueTimer = 0;
@@ -61,9 +82,36 @@ public class UI {
         gs.getUi().npcNumber = index;
     }
 
-    public void draw(Graphics2D g2) {
+    void state0(Graphics2D g2) throws IOException {
+        for(int i = 0; i < 4; i++) {
+            g2.drawImage(buttons[i].getImage(), buttons[i].bounds.x, buttons[i].bounds.y, buttons[i].bounds.width, buttons[i].bounds.height, null);
+            if(buttons[i].currentLabel == 2) {
+                switch (i) {
+                    case 0:
+                        GameScreen.setCurrentState(1);
+                        break;
+                    case 1:
+                        gs.loadAllVariables("DataBase", "TableForGame");
+                        GameScreen.setCurrentState(1);
+                        break;
+                    case 2:
+                        GameScreen.setCurrentState(4);
+                        break;
+                    case 3:
+                        System.exit(0);
+                        break;
+                }
+                break;
+            }
+        }
+    }
+
+    void state1(Graphics2D g2) {
+        gs.mouse.leftClick = false;
+
         g2.setFont(font);
         g2.drawString("", 0, 0);
+        g2.drawString("Enemies Remaining: " + gs.numberOfRemainingEnemies[gs.onMap], gs.getWidth() - 350, 30);
 
         g2.drawImage(HP_Bar, 20, 15,null);
         int HPWidth = (int) ((float) gs.player.HP / (float) gs.player.maxHP * 100);
@@ -122,11 +170,86 @@ public class UI {
             }
         }
     }
+    void state2(Graphics2D g2) throws IOException {
+        for(int i = 4; i < 7; i++) {
+            g2.drawImage(buttons[i].getImage(), buttons[i].bounds.x, buttons[i].bounds.y, buttons[i].bounds.width, buttons[i].bounds.height, null);
+            if(buttons[i].currentLabel == 2) {
+                switch (i) {
+                    case 4:
+                        GameScreen.setCurrentState(1);
+                        break;
+                    case 5:
+                        int []v = new int[4];
+                        for (int k = 0; k < 4; k++) {
+                            if(gs.player.abilityUnlocked[k])
+                                v[k] = 1;
+                        }
+                        String []s = new String[4];
+                        for(int j = 0; j < 4; j++) {
+                            if(gs.player.items[j] == null) {
+                                s[j] = null;
+                            } else {
+                                s[j] = gs.player.items[j].getName();
+                            }
+                        }
+                        insertB("DataBase", "TableForGame", gs.onMap, gs.player.getWorldX(), gs.player.getWorldY(), gs.player.initSpeed, GameScreen.scor, gs.player.maxHP, gs.player.maxST, gs.player.maxMP, v[0], v[1], v[2], v[3], gs.numberOfRemainingEnemies[0], gs.numberOfRemainingEnemies[1], gs.numberOfRemainingEnemies[2], s[0], s[1], s[2], s[3], gs.player.numberOfItems[0], gs.player.numberOfItems[1], gs.player.numberOfItems[2], gs.player.numberOfItems[3], GameScreen.scores[0], GameScreen.scores[1], GameScreen.scores[2]);
+                        break;
+                    case 6:
+                        GameScreen.setCurrentState(0);
+                        break;
+                }
+                break;
+            }
+        }
+    }
+    void state3(Graphics2D g2) {
+        g2.setFont(font2);
+        g2.drawString("Victory!", gs.getWidth() / 2 - 150, gs.getHeight() / 2);
+        int []v = new int[4];
+        for (int k = 0; k < 4; k++) {
+            if(gs.player.abilityUnlocked[k])
+                v[k] = 1;
+        }
+        insertB("DataBase", "TableForGame", gs.onMap, gs.player.getWorldX(), gs.player.getWorldY(), gs.player.initSpeed, GameScreen.scor, gs.player.maxHP, gs.player.maxST, gs.player.maxMP, v[0], v[1], v[2], v[3], gs.numberOfRemainingEnemies[0], gs.numberOfRemainingEnemies[1], gs.numberOfRemainingEnemies[2], null, null, null, null, gs.player.numberOfItems[0], gs.player.numberOfItems[1], gs.player.numberOfItems[2], gs.player.numberOfItems[3], GameScreen.scores[0], GameScreen.scores[1], GameScreen.scores[2]);
+
+    }
+    void state4(Graphics2D g2) throws IOException {
+        g2.drawImage(buttons[4].getImage(), buttons[4].bounds.x, buttons[4].bounds.y, buttons[4].bounds.width, buttons[4].bounds.height, null);
+        if(buttons[4].currentLabel == 2)
+            GameScreen.setCurrentState(0);
+        int []scores = GameScreen.scores;
+        for(int i = 0; i < 2; i++) {
+            for(int j = i + 1; j < 2; j++) {
+                if(scores[i] < scores[j]) {
+                    int tmp = scores[i];
+                    scores[i] = scores[j];
+                    scores[j] = tmp;
+                }
+            }
+        }
+        int x = gs.getWidth() / 2 - 30;
+        int y = gs.getHeight() / 2;
+        for(int i = 0; i < 3; i++) {
+            g2.drawString(scores[i] + " ", x, y);
+            y += 30;
+        }
+    }
+
+
+    public void draw(Graphics2D g2) throws IOException {
+        switch (GameScreen.getCurrentState()) {
+            case 0 -> state0(g2);
+            case 1 -> state1(g2);
+            case 2 -> state2(g2);
+            case 3 -> state3(g2);
+            case 4 -> state4(g2);
+        }
+        gs.mouse.leftClick = false;
+    }
 
     public static void loadMessage(String message) {
         UI.message = message;
         UI.messageCheck = true;
         UI.messageTimer = 0;
     }
-
 }

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Miririri:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Miririri_jar</output-path>
+    <root id="archive" name="Miririri.jar">
+      <element id="module-output" name="Miririri" />
+    </root>
+  </artifact>
+</component>

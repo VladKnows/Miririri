@@ -51,7 +51,7 @@ abstract public class Projectile {
             case "Ultra_Sound":
                 image = new ImageVector("/Abilities", name, 288, numberOfImages, durationsOfImages);
                 break;
-            case "Player_Ability_3", "Tornado":
+            case "Player_Ability_3", "Tornado", "Slash":
                 image = new ImageVector("/Abilities", name, 96, numberOfImages, durationsOfImages);
                 break;
             default:
@@ -67,7 +67,7 @@ abstract public class Projectile {
         this.timeUntilNextHit = timeUntilNextHit;
     }
 
-    abstract public void update(GameScreen gs, int entityX, int entityY);
+    abstract public void update(GameScreen gs, int entityX, int entityY) throws IOException;
 
     void init(int posX, int posY) {
         setCoord(posX, posY);

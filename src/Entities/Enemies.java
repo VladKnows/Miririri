@@ -57,8 +57,14 @@ public abstract class Enemies extends MovingEntity {
 
     void loadCastImagesAndTimes(int numberOfAbilities, int []numberOfImages, int [][]numberOfFramesPerImage) throws IOException {
         castImages = new ImageVector[numberOfAbilities];
-        for(int i = 0; i < numberOfAbilities; i++) {
-            castImages[i] = new ImageVector("/Enemies/" + name, name + "_Cast_" + i, numberOfImages[i], numberOfFramesPerImage[i]);
+        if(name != "Ghostly") {
+            for (int i = 0; i < numberOfAbilities; i++) {
+                castImages[i] = new ImageVector("/Enemies/" + name, name + "_Cast_" + i, numberOfImages[i], numberOfFramesPerImage[i]);
+            }
+        } else {
+            for (int i = 0; i < numberOfAbilities; i++) {
+                castImages[i] = new ImageVector("/Enemies/" + name, name + "_Cast_" + i, 96, numberOfImages[i], numberOfFramesPerImage[i]);
+            }
         }
     }
 
