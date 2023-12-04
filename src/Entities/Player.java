@@ -73,7 +73,7 @@ public class Player extends MovingEntity {
         //Attributes
         HP = 100;
         ST = 100;
-        MP = 300;
+        MP = 350;
         maxHP = HP;
         maxMP = MP;
         maxST = ST;
@@ -292,7 +292,7 @@ public class Player extends MovingEntity {
                         }
                         break;
                     case "Mana_Potion":
-                        MP += 100;
+                        MP += 150;
                         if (MP > maxMP) {
                             MP = maxMP;
                         }
