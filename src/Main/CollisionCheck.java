@@ -5,7 +5,6 @@ import Entities.MovingEntity;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.io.IOException;
 import java.util.Objects;
 
 public class CollisionCheck {

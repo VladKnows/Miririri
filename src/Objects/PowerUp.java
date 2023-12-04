@@ -20,6 +20,6 @@ public class PowerUp extends SuperObject {
     @Override
     public void update() throws IOException {
         super.update();
-        GameScreen.getInstance().setObj(markedForDeletion, null);
+        GameScreen.getInstance().setObj(markedForDeletion);
     }
 }
