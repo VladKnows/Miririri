@@ -103,7 +103,7 @@ public class Player extends MovingEntity {
         return instance;
     }
 
-    public static Player getInstance() throws IOException {
+    public static Player getInstance() {
         return instance;
     }
 
@@ -280,7 +280,7 @@ public class Player extends MovingEntity {
         }
     }
 
-    void useItem() throws IOException {
+    void useItem() {
         if(keys.qPress) {
             if (numberOfItems[onItem] != 0) {
                 numberOfItems[onItem]--;
@@ -301,7 +301,7 @@ public class Player extends MovingEntity {
                         ST = maxST;
                         break;
                     case "Hour_Glass":
-                        GameScreen.getInstance().timeStop = true;
+                        GameScreen.timeStop = true;
                         break;
                 }
                 if(numberOfItems[onItem] == 0) {
@@ -330,24 +330,25 @@ public class Player extends MovingEntity {
             ability.init(worldX, worldY);
             for (int i = 0; i < ability.projectiles.length; i++) {
                 int x = 0, y = 0;
-                switch (directionAtCast) {
-                    case 0:
+                y = switch (directionAtCast) {
+                    case 0 -> {
                         x = worldX;
-                        y = worldY - 1000;
-                        break;
-                    case 2:
+                        yield worldY - 1000;
+                    }
+                    case 2 -> {
                         x = worldX;
-                        y = worldY + 1000;
-                        break;
-                    case 1:
+                        yield worldY + 1000;
+                    }
+                    case 1 -> {
                         x = worldX + 1000;
-                        y = worldY;
-                        break;
-                    case 3:
+                        yield worldY;
+                    }
+                    case 3 -> {
                         x = worldX - 1000;
-                        y = worldY;
-                        break;
-                }
+                        yield worldY;
+                    }
+                    default -> y;
+                };
                 ability.projectiles[i].setToOnce(x, y);
             }
             gs.playerAbilities.add(ability);
@@ -484,35 +485,21 @@ public class Player extends MovingEntity {
             image = castImages[abilityInUse][directionAtCast].GetImage();
         }
         else if (!standing) {
-            switch (direction) {
-                case "up":
-                    image = upWalk.GetImage(speedProportion);
-                    break;
-                case "down":
-                    image = downWalk.GetImage(speedProportion);
-                    break;
-                case "left", "ul", "dl":
-                    image = leftWalk.GetImage(speedProportion);
-                    break;
-                case "right", "ur", "dr":
-                    image = rightWalk.GetImage(speedProportion);
-                    break;
-            }
+            image = switch (direction) {
+                case "up" -> upWalk.GetImage(speedProportion);
+                case "down" -> downWalk.GetImage(speedProportion);
+                case "left", "ul", "dl" -> leftWalk.GetImage(speedProportion);
+                case "right", "ur", "dr" -> rightWalk.GetImage(speedProportion);
+                default -> throw new IllegalStateException("Unexpected value: " + direction);
+            };
         } else {
-            switch (direction) {
-                case "upS":
-                    image = up;
-                    break;
-                case "downS":
-                    image = down;
-                    break;
-                case "rightS":
-                    image = right;
-                    break;
-                case "leftS":
-                    image = left;
-                    break;
-                }
+            image = switch (direction) {
+                case "upS" -> up;
+                case "downS" -> down;
+                case "rightS" -> right;
+                case "leftS" -> left;
+                default -> image;
+            };
         }
         if(HP == 0) {
             image = dead;

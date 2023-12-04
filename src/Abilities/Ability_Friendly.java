@@ -1,6 +1,5 @@
 package Abilities;
 
-import Entities.Entity;
 import Main.GameScreen;
 
 import java.io.IOException;
@@ -15,9 +14,8 @@ public class Ability_Friendly extends Ability {
     }
 
     public void update(GameScreen gs) throws IOException {
-        for(int i = 0; i < projectiles.length; i++) {
-            projectiles[i].update(gs, 0, 0);
+        for (Projectile projectile : projectiles) {
+            projectile.update(gs, 0, 0);
         }
     }
-
 }

@@ -7,7 +7,6 @@ import Abilities.Projectile_Static;
 import Main.GameScreen;
 
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 import java.io.IOException;
 
 import static Main.GameScreen.scale;
@@ -34,5 +33,4 @@ public class Rock_Head extends Enemies {
         abilities[0] = new Ability(120, 90, true, false, new Projectile[]{new Projectile_Static(false, false, true, "Ground_Rise", 416, 416, 160, 200, new Rectangle(30, 30, 356, 356), 20, 5, new int[] {5, 5, 74, 3, 3})});
         abilities[1] = new Ability(400, 250, true, false, new Projectile[]{new Projectile_Moving(false, false, false, "Tornado", 192, 192, 48, 48, gs.getPlayer().worldX + 48, gs.getPlayer().worldY + 48, 2, false, new Rectangle(20, 0, 152, 180), 30, 4, new int[] {3, 3, 3, 3})});
     }
-
 }

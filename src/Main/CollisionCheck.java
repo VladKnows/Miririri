@@ -15,7 +15,7 @@ public class CollisionCheck {
         this.gs = gs;
     }
 
-    public void CheckHit(MovingEntity entity, Projectile projectile) throws IOException {
+    public void CheckHit(MovingEntity entity, Projectile projectile) {
         Rectangle p = new Rectangle(entity.getWorldX() + entity.getSolid().x, entity.getWorldY() + entity.getSolid().y, entity.getSolid().width, entity.getSolid().height);
         AffineTransform a0 = AffineTransform.getTranslateInstance(projectile.x, projectile.y);
         Shape a = a0.createTransformedShape(projectile.solid);
@@ -152,65 +152,6 @@ public class CollisionCheck {
             }
         }
     }
-
-    /*public void CheckObject(MovingEntity entity) {
-        for(int i = 0; i < gs.obj[gs.onMap].length; i++) {
-            if(gs.obj[gs.onMap][i] != null && gs.obj[gs.onMap][i].isCollision()) {
-                int entityLeftWorldX = entity.getWorldX() + entity.getSolid().x;
-                int entityRightWorldX = entity.getWorldX() + entity.getSolid().x + entity.getSolid().width;
-                int entityTopWorldY = entity.getWorldY() + entity.getSolid().y;
-                int entityBottomWorldY = entity.getWorldY() + entity.getSolid().y + entity.getSolid().height;
-
-                if (Objects.equals(entity.direction, "up") || Objects.equals(entity.direction, "ul") || Objects.equals(entity.direction, "ur")) {
-                    entityTopWorldY -= entity.speed;
-
-                    int objectX1 = gs.obj[gs.onMap][i].getWorldX() + gs.obj[gs.onMap][i].getSolid().x;
-                    int objectY1 = gs.obj[gs.onMap][i].getWorldY() + gs.obj[gs.onMap][i].getSolid().y;
-                    int objectX2 = objectX1 + gs.obj[gs.onMap][i].getSolid().width;
-                    int objectY2 = objectY1 + gs.obj[gs.onMap][i].getSolid().height;
-                    if ((objectX1 < entityLeftWorldX && objectX2 > entityLeftWorldX && objectY1 < entityTopWorldY && objectY2 > entityTopWorldY) ||
-                            (objectX1 < entityRightWorldX && objectX2 > entityRightWorldX && objectY1 < entityTopWorldY && objectY2 > entityTopWorldY))
-                        entity.collisionOn1 = true;
-                    entityTopWorldY += entity.speed;
-                }
-                if (Objects.equals(entity.direction, "down") || Objects.equals(entity.direction, "dl") || Objects.equals(entity.direction, "dr")) {
-                    entityBottomWorldY += entity.speed;
-
-                    int objectX1 = gs.obj[gs.onMap][i].getWorldX() + gs.obj[gs.onMap][i].getSolid().x;
-                    int objectY1 = gs.obj[gs.onMap][i].getWorldY() + gs.obj[gs.onMap][i].getSolid().y;
-                    int objectX2 = objectX1 + gs.obj[gs.onMap][i].getSolid().width;
-                    int objectY2 = objectY1 + gs.obj[gs.onMap][i].getSolid().height;
-                    if ((objectX1 < entityLeftWorldX && objectX2 > entityLeftWorldX && objectY1 < entityBottomWorldY && objectY2 > entityBottomWorldY) ||
-                            (objectX1 < entityRightWorldX && objectX2 > entityRightWorldX && objectY1 < entityBottomWorldY && objectY2 > entityBottomWorldY))
-                        entity.collisionOn1 = true;
-                    entityBottomWorldY -= entity.speed;
-                }
-                if (Objects.equals(entity.direction, "left") || Objects.equals(entity.direction, "ul") || Objects.equals(entity.direction, "dl")) {
-                    entityLeftWorldX -= entity.speed;
-
-                    int objectX1 = gs.obj[gs.onMap][i].getWorldX() + gs.obj[gs.onMap][i].getSolid().x;
-                    int objectY1 = gs.obj[gs.onMap][i].getWorldY() + gs.obj[gs.onMap][i].getSolid().y;
-                    int objectX2 = objectX1 + gs.obj[gs.onMap][i].getSolid().width;
-                    int objectY2 = objectY1 + gs.obj[gs.onMap][i].getSolid().height;
-                    if ((objectX1 < entityLeftWorldX && objectX2 > entityLeftWorldX && objectY1 < entityTopWorldY && objectY2 > entityTopWorldY) ||
-                            (objectX1 < entityLeftWorldX && objectX2 > entityLeftWorldX && objectY1 < entityBottomWorldY && objectY2 > entityBottomWorldY))
-                        entity.collisionOn2 = true;
-                }
-                if (Objects.equals(entity.direction, "right") || Objects.equals(entity.direction, "ur") || Objects.equals(entity.direction, "dr")) {
-                    entityRightWorldX += entity.speed;
-
-                    int objectX1 = gs.obj[gs.onMap][i].getWorldX() + gs.obj[gs.onMap][i].getSolid().x;
-                    int objectY1 = gs.obj[gs.onMap][i].getWorldY() + gs.obj[gs.onMap][i].getSolid().y;
-                    int objectX2 = objectX1 + gs.obj[gs.onMap][i].getSolid().width;
-                    int objectY2 = objectY1 + gs.obj[gs.onMap][i].getSolid().height;
-
-                    if ((objectX1 < entityRightWorldX && objectX2 > entityRightWorldX && objectY1 < entityTopWorldY && objectY2 > entityTopWorldY) ||
-                            (objectX1 < entityRightWorldX && objectX2 > entityRightWorldX && objectY1 < entityBottomWorldY && objectY2 > entityBottomWorldY))
-                        entity.collisionOn2 = true;
-                }
-            }
-        }
-    }*/
 
     public void CheckNPC(MovingEntity entity) {
         for(int i = 0; i < gs.npc.length; i++) {

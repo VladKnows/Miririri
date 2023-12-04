@@ -44,22 +44,6 @@ public class DataBase {
 
             String sql = "INSERT INTO " + nume_tabela + "(onMap, playerX, playerY, playerSpeed, scor, HP, ST, MP, ability0, ability1, ability2, ability3, numberOfEnemiesLeft0, numberOfEnemiesLeft1, numberOfEnemiesLeft2, itemAmount0, itemAmount1, itemAmount2, itemAmount3, scores0, scores1, scores2) " + "VALUES (" + map + "," + playerX + "," + playerY + "," + playerSpeed + "," + scor + "," + maxHP + "," + maxST + "," + maxMP + "," + ability0 + "," + ability1 + "," + ability2 + "," + ability3 + "," + numberofEnemies0 + "," + numberofEnemies1 + "," + numberofEnemies2 + ","  + itemAmount0 + "," + itemAmount1 + "," + itemAmount2 + "," + itemAmount3 + "," + scores0 + "," + scores1 + "," + scores2 + ");";
             String sql1 = null;
-            /*if(item0 != null) {
-                sql1 = "INSERT INTO " + nume_tabela + "(itemName0) " + "VALUES (" + item0  + ");";
-                stmt.executeUpdate(sql1);
-            }
-            if(item1 != null) {
-                sql1 = "INSERT INTO " + nume_tabela + "(itemName1) " + "VALUES (" + item1  + ");";
-                stmt.executeUpdate(sql1);
-            }
-            if(item2 != null) {
-                sql1 = "INSERT INTO " + nume_tabela + "(itemName2) " + "VALUES (" + item2  + ");";
-                stmt.executeUpdate(sql1);
-            }
-            if(item3 != null) {
-                sql1 = "INSERT INTO " + nume_tabela + "(itemName3) " + "VALUES (" + item3  + ");";
-                stmt.executeUpdate(sql1);
-            }*/
             stmt.executeUpdate(sql);
             stmt.close();
             c.commit();
@@ -124,6 +108,5 @@ public class DataBase {
             System.exit(0);
         }
         return value;
-
     }
 }

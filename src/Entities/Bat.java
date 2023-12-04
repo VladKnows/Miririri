@@ -36,5 +36,4 @@ public class Bat extends Enemies {
         abilities[2] = new Ability(70, 40, false, false, new Projectile[]{new Projectile_Static(false, false, true, "Wing_Swing", 96, 96, 0, 0, new Rectangle(0, 0, 96, 96), 10, 5, new int[] {5, 5, 5, 5, 20})});
         abilities[3] = new Ability(350, 300, true, true, new Projectile[]{new Projectile_Moving(false, false, true, "Bat_Ball", 96, 96, 0, -50, gs.getPlayer().worldX, gs.getPlayer().worldY, 3, false, new Ellipse2D.Double(0, 0, 96, 96), 4, 10,11, new int[] {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2})});
     }
-
 }

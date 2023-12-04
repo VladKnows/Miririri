@@ -2,12 +2,10 @@ package Entities;
 
 import Abilities.Ability;
 import Abilities.Projectile;
-import Abilities.Projectile_Moving;
 import Abilities.Projectile_Static;
 import Main.GameScreen;
 
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 import java.io.IOException;
 
 import static Main.GameScreen.scale;
@@ -49,6 +47,4 @@ public class Ghostly extends Enemies{
                 g2.drawImage(imageGetter(), screenX - 96, screenY - 96, gs.tileSize * 3, gs.tileSize * 3, null);
         }
     }
-
-
 }

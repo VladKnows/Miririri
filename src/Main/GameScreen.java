@@ -25,11 +25,11 @@ public class GameScreen extends JPanel implements Runnable {
 
     //States
     static private int currentState = 0;
-    public final static int MENU = 0;
+    /*public final static int MENU = 0;
     public final static int INGAME = 1;
     public final static int PAUSED = 2;
     public final static int VICTORY = 3;
-    public final static int SCORES = 4;
+    public final static int SCORES = 4;*/
 
 
     //Tiles
@@ -112,11 +112,11 @@ public class GameScreen extends JPanel implements Runnable {
     public SuperObject[] getObj() { return obj[onMap]; }
 
     public Map getMaps(int nr) { return maps[nr]; }
-    public NPC getNpc(int nr) { return npc[onMap][nr]; }
+    //public NPC getNpc(int nr) { return npc[onMap][nr]; }
     public SuperObject getObj(int nr) { return obj[onMap][nr]; }
 
     //Setters
-    public void setObj(int index, SuperObject obj) {
+    public void setObj(int index) {
         this.obj[onMap][index] = null;
     }
 
@@ -228,26 +228,23 @@ public class GameScreen extends JPanel implements Runnable {
         Graphics2D g2 = back.createGraphics();
 
         //Draws
-        switch (currentState) {
-            case 0, 2, 3, 4:
-                try {
-                    ui.draw(g2);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case 1:
-                tileM[onMap].draw(g2);          //Tiles
-                drawObjects(g2);                //Objects
-                drawNpcs(g2);                   //NPCs
-                drawEnemiesAndAbilities(g2);    //Enemies & their Abilities
-                player.draw(g2);                //Player
-                try {
-                    ui.draw(g2);                    //UI
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
+        if (currentState == 1) {
+            tileM[onMap].draw(g2);          //Tiles
+            drawObjects(g2);                //Objects
+            drawNpcs(g2);                   //NPCs
+            drawEnemiesAndAbilities(g2);    //Enemies & their Abilities
+            player.draw(g2);                //Player
+            try {
+                ui.draw(g2);                    //UI
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                ui.draw(g2);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         //Double Buffer
@@ -332,20 +329,6 @@ public class GameScreen extends JPanel implements Runnable {
             String s;
             int index;
 
-//        if(getB(n, t, "String", "itemName0") != null) {
-//            s = (String) getB(n, t, "String", "itemName0");
-//            index = 0;
-//            addItemFromString(index, s);
-//        }
-//        s = (String) getB(n, t, "String", "itemName1");
-//        index = 1;
-//        addItemFromString(index, s);
-//        s = (String) getB(n, t, "String", "itemName2");
-//        index = 2;
-//        addItemFromString(index, s);
-//        s = (String) getB(n, t, "String", "itemName3");
-//        index = 3;
-//        addItemFromString(index, s);
             player.numberOfItems[0] = (int) getB(n, t, "int", "itemAmount0");
             player.numberOfItems[1] = (int) getB(n, t, "int", "itemAmount1");
             player.numberOfItems[2] = (int) getB(n, t, "int", "itemAmount2");
@@ -372,7 +355,6 @@ public class GameScreen extends JPanel implements Runnable {
     static public void setCurrentState(int i) {
         currentState = i;
     }
-
     static public int getCurrentState() {
         return currentState;
     }
